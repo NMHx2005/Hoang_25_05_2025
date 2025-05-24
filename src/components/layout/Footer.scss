@@ -31,7 +31,7 @@
     flex-basis: 400px; /* Adjusted base width */
     flex-grow: 1; /* Allow it to grow */
     margin-right: 40px; /* Add space to the right */
-
+margin-bottom: 40px;
     @media (max-width: 1024px) {
       flex-basis: 100%; /* Full width on smaller screens */
       margin-right: 0;
@@ -101,7 +101,6 @@
 
   &__app-download {
     margin-right: 40px; /* Space between app download and navigation */
-    order: 1;
     @media (max-width: 1024px) {
       margin-right: 0;
       margin-bottom: 40px;
