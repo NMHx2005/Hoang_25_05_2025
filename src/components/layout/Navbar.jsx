@@ -10,7 +10,7 @@ const Navbar = () => {
   const primaryNav = [
     { name: 'NEW & TRENDING', href: '/new-trending' },
     { name: 'CUSTOM', href: '/custom' },
-    { name: 'CHARMS', href: '/charms' },
+    { name: 'CHARMS', href: '/charm' },
   ];
 
   const secondaryNav = [

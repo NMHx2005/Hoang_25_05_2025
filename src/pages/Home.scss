@@ -32,7 +32,7 @@
 }
 
 .home__best-sellers {
-  background: #fff8f0;
+  // background: #fff8f0;
   padding: 65px 0 80px 0;
   margin: 0;
 }
@@ -437,7 +437,7 @@
 }
 
 .home__your-story {
-  background-color: #ff92a9; /* Exact pink background color from plugin */
+  // background-color: #ff92a9; /* Exact pink background color from plugin */
   padding: 135px 0; /* Vertical padding based on plugin data */
 
   .container {
@@ -460,8 +460,6 @@
 
   &-image {
     flex-shrink: 0;
-    width: 730px; /* Fixed width based on plugin data */
-    height: 730px; /* Fixed height based on plugin data */
     max-width: 50%; /* Limit max width to half container */
     border-radius: 20px; /* Rounded corners based on plugin data */
     overflow: hidden;
@@ -502,29 +500,30 @@
   &-title {
     font-size: 64px; /* Larger title font size based on plugin */
     font-weight: 800;
-    color: #534b9c; /* Adjusted dark purple/blue  color from plugin */
+    color: #000000; /* Adjusted dark purple/blue  color from plugin */
     margin-bottom: 1rem; /* Space below title */
     font-style: normal;
-  font-family: "Irish Grover", system-ui;
+  // font-family: "Irish Grover", system-ui;
     line-height: 1.1; /* Adjust line height */
   }
 
   &-description {
     font-size: 1.2rem; /* Adjusted description font size */
-    color: #524993; /* Adjusted grayish text color from plugin */
+    color: #000000; /* Adjusted grayish text color from plugin */
     margin-bottom: 2rem; /* Space below description */
     max-width: 700px; /* Limit description width */
     margin-left: auto; /* Center description */
-      font-family: "Irish Grover", system-ui;
-
+      // font-family: "Irish Grover", system-ui;
+    font-weight: 200;
+    font-style: italic;
     margin-right: auto; /* Center description */
   }
 
   &-button {
-    background-color: #ffebf5; /* Light pink background from plugin */
+    background-color: #000000; /* Light pink background from plugin */
     color: #FF92A9; /* Pink button text color */
     border: 1px solid #ffebf5; /* Light pink border */
-    border-radius: 96px; /* Very rounded button corners based on plugin */
+    border-radius: 10px; /* Very rounded button corners based on plugin */
     padding: 18px 30px; /* Button padding based on plugin */
     font-size: 14px;
     font-weight: 500;
@@ -612,13 +611,13 @@
 }
 
 .home__categories-button {
-  background-color: #ff92a9;
+  background-color: #000000;
   color: #fff;
   border: none;
-  border-radius: 96px;
+  border-radius: 10px;
   padding: 18px 40px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: background-color 0.2s ease-in-out;
@@ -639,7 +638,7 @@
     display: flex;
     border-radius: 30px;
     overflow: hidden;
-    background-color: #FFFCD4;
+    background-color: #000000;
 
     @media (max-width: 1200px) {
       flex-direction: column;
@@ -739,23 +738,8 @@
     align-items: center;
     text-align: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-
-    &--wear {
-      background-color: #ff92a9;
-      color: #fff;
-    }
-    &--connect {
-      background-color: #c0ebff;
-      color: #222;
-    }
-    &--give {
-      background-color: #ffaf4d;
-      color: #222;
-    }
-    &--live {
-      background-color: #FFF7D7;
-      color: #222;
-    }
+    background-color: white;
+    color: #000000;
   }
 
   &-card-icon {
@@ -774,37 +758,22 @@
     font-size: 40px;
     font-weight: 700;
     margin-bottom: 10px;
-
-    .home__how-it-works-card--wear & {
-      color: #fff8f0;
-    }
-    .home__how-it-works-card--connect &,
-    .home__how-it-works-card--give & {
-      color: #0d0c22;
-    }
   }
 
   &-card-description {
     font-size: 16px;
     line-height: 1.5;
 
-    .home__how-it-works-card--wear & {
-      color: #fff8f0;
-    }
-    .home__how-it-works-card--connect &,
-    .home__how-it-works-card--give & {
-      color: #0d0c22;
-    }
   }
 
   &-learn-more-button {
-    background-color: #ff92a9;
-    color: #fff;
+    background-color: white;
+    color: #000000;
     border: none;
     border-radius: 96px;
     padding: 18px 40px;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     transition: background-color 0.2s ease-in-out;
@@ -817,14 +786,14 @@
 
 /* A Little About Our Products Section */
 .home__about-products {
-  background-color: #ff92a9; /* Pink background from image */
+  // background-color: #ff92a9; /* Pink background from image */
   padding: 65px 0; /* Vertical padding based on plugin */
   margin: 0;
   .container {
     max-width: calc(100% - 80px); /* Container width from plugin */
     margin: 0 auto;
     padding: 0 40px; /* Horizontal padding from plugin */
-    border: 1px solid #fff8f0; /* White border from plugin */
+    border: 1px solid #000000; /* White border from plugin */
     border-radius: 10px; /* Corner radius from plugin */
     text-align: center; /* Center align content */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
@@ -898,7 +867,7 @@
     width: 1583px; /* Width from plugin */
     max-width: 100%;
     height: 1px;
-    background-color: rgba(255, 255, 255, 0.4); /* White with opacity from plugin */
+    background-color: #000000; /* White with opacity from plugin */
     margin: 0 auto 16px auto; /* Center and add space below (keeping previous value) */
   }
 
@@ -994,13 +963,13 @@
   }
 
   &-button {
-    background-color: #FB7697; /* Black background */
+    background-color: black; /* Black background */
     color: #fff8f0; /* Light yellow text color */
     border: none;
     border-radius: 96px; /* Very rounded corners */
     padding: 12px 30px; /* Button padding */
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
 

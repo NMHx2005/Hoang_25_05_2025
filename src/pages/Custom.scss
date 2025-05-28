@@ -1,0 +1,447 @@
+.custom {
+  padding: 0;
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  // Banner Section
+  &__banner {
+    position: relative;
+    width: 100%;
+    height: 400px; // Adjust height as needed
+    overflow: hidden;
+    margin-top: 200px;
+    margin-bottom: 32px;
+    padding: 0 40px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      object-fit: cover;
+    }
+
+    &-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    //   background-color: rgba(0, 0, 0, 0.3); // Dark overlay
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 5rem; // Adjust padding as needed
+
+      h1 {
+        color: white;
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        text-align: left; // Align text to the left
+      }
+
+      p {
+        color: white;
+        font-size: 1.2rem;
+        text-align: left; // Align text to the left
+      }
+    }
+  }
+
+  // Category/Content Section
+  &__content-section {
+    text-align: center;
+    padding: 4rem 0;
+
+    .custom__logo {
+      width: 80px; // Adjust size as needed
+      margin-bottom: 1rem;
+    }
+
+    .custom__category {
+      font-size: 1rem;
+      color: #888; // Adjust color as needed
+      margin-bottom: 0.5rem;
+    }
+
+    .custom__qr-content-title {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+    }
+  }
+
+  // Radio/Image Section
+  &__radio-image-section {
+    background-image: url('/images/banner__home.png'); // Use image for background
+    background-size: cover; // Cover the entire section
+    background-position: center; // Center the background image
+    background-repeat: no-repeat; // Do not repeat the image
+    background-color: #e5e5e5; // Keep a fallback background color
+    padding: 4rem 0; // Keep existing vertical padding, adjust as needed
+    border-radius: 10px; // Corner radius from Figma
+    min-height: 442px; // Min height from Figma
+    display: flex; // Use flexbox to center content
+    justify-content: center; // Center horizontally
+    align-items: center; // Center vertically
+    margin: 2rem auto; // Center the section itself and add margin
+    max-width: 1200px; // Limit max width, adjust if needed
+    width: calc(100% - 2rem); // Adjust width with padding consideration
+
+    .custom__radio-image-container {
+      // This container might not be needed with centering on the section itself
+      // If needed for internal layout, adjust flex properties
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%; // Ensure it takes full width for centering
+    }
+
+    .custom__radio-button {
+      background-color: black;
+      color: white;
+      padding: 1rem 3rem;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      border-radius: 10px; // Corner radius from Figma button
+      width: 220px; // Width from Figma button (approx)
+      height: 54px; // Height from Figma button (approx)
+      display: flex; // Use flexbox for text centering inside button
+      justify-content: center; // Center text horizontally
+      align-items: center; // Center text vertically
+      text-transform: uppercase; // Text seems uppercase in image
+      font-weight: bold; // Text seems bold
+    }
+  }
+
+  // Adjust existing h1 style if it's still present
+  > .container h1 {
+    display: none; // Hide the old h1 if it's still there
+  }
+
+  // Products Section
+  &__products-section {
+    padding: 4rem 0;
+
+    .custom__filter-sort {
+      text-align: right; // Align button to the right
+      margin-bottom: 2rem;
+
+      &-button {
+        background-color: black;
+        color: white;
+        // Adjust padding/size based on Figma (approx 220x54)
+        padding: 1rem 2.5rem; // Adjusted padding
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        border-radius: 96px; // Pill shape from Figma
+        text-transform: uppercase;
+        font-weight: 400;
+        transition: background-color 0.3s ease; // Add transition for hover
+
+        &:hover {
+          background-color: #333; // Darker background on hover
+        }
+      }
+    }
+
+    .custom__products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); // Responsive grid
+      gap: 2rem; // Space between grid items
+    }
+
+    .custom__product-card {
+      background-color: #fff; // White background for cards
+      border-radius: 10px; // Rounded corners for cards
+      overflow: hidden; // Hide overflowing parts of the image
+      
+      &:hover {
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Optional shadow
+          cursor: pointer;
+      }
+
+      display: flex; // Use flexbox for card layout
+      flex-direction: column; // Stack image and info vertically
+    }
+
+    .custom__product-image-container {
+      position: relative; // Needed for positioning the add button
+      width: 100%;
+      // Use aspect-ratio for square image container based on Figma 442.25x442.25
+      aspect-ratio: 1 / 1;
+      background-color: #e5e5e5; // Background color from Figma
+      border-radius: 10px; // Rounded corners for the image container (matches card)
+      overflow: hidden; // Ensure image respects border radius
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; // Cover the container without distortion
+      }
+    }
+
+    .custom__add-button {
+      position: absolute;
+      top: 10px; // Position from top as per Figma
+      right: 10px; // Position from right (Figma shows 406.25 from left on 442.25 width, which is 36px from right. Sticking to 10px for consistency with image and common practice)
+      background-color: transparent; // Make background transparent
+      border-radius: 50%; // Make it round
+      width: 26px; // Button size from Figma
+      height: 26px; // Button size from Figma
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: none; // Remove border if not in Figma
+      cursor: pointer;
+      padding: 0; // Remove padding to control size via width/height
+
+      svg {
+        width: 100%; // SVG icon size fills the button
+        height: 100%;
+        color: #2E2BD8;
+      }
+    }
+
+    .custom__product-info {
+      padding: 1rem; // Keep padding
+      text-align: left; // Align text to the left as per Figma
+      flex-grow: 1; // Allow info section to take remaining space
+    }
+
+    .custom__product-name {
+      font-size: 1.1rem; // Keep existing size, adjust if needed
+      font-weight: 400; // Keep bold
+      margin-bottom: 0.2rem; // Reduce margin for closer spacing
+      color: #0D0C22; // Text color from Figma
+    }
+
+    .custom__product-price {
+      font-size: 1rem; // Keep existing size
+      color: #2E2BD8; // Text color from Figma
+      font-weight: 300; // Price seems bold in image/Figma
+    }
+  }
+
+  // Load More and You May Also Like Section
+  &__you-may-also-like-section {
+    padding: 4rem 0;
+    text-align: center; // Center content in this section
+
+    .custom__viewed-products-info {
+      font-size: 1rem;
+      color: #555; // Adjust color as needed
+      margin-bottom: 1rem;
+    }
+
+    .custom__load-more {
+      margin-bottom: 4rem; // Space between load more and title
+
+      &-button {
+        background-color: black;
+        color: white;
+        padding: 1rem 3rem; // Adjust padding as needed
+        border: none;
+        cursor: pointer;
+        font-size: 1.2rem;
+        border-radius: 96px; // Pill shape
+        text-transform: uppercase;
+        font-weight: bold;
+        transition: background-color 0.3s ease; // Add transition for hover
+
+        &:hover {
+          background-color: #333; // Darker background on hover
+        }
+      }
+    }
+
+    .custom__you-may-also-like-title {
+      font-size: 2rem; // Adjust font size as needed
+      margin-bottom: 2rem; // Space between title and carousel
+      color: #0D0C22; // Text color from Figma
+    }
+
+    // Swiper styles for You May Also Like carousel
+    .swiper-container { // Swiper main container class
+      width: 100%;
+      padding-bottom: 1rem; // Add some padding at the bottom for the scrollbar
+    }
+
+    .swiper-slide { // Swiper slide class
+      width: 300px; // Set a fixed width for carousel items, adjust as needed
+      // Ensure existing product card styles are applied
+      display: flex; // Use flexbox for slide content
+      flex-direction: column; // Stack card content vertically
+    }
+
+    .custom__product-card { // Reuse product card style
+      // Ensure existing styles for card background, border-radius, shadow are here
+      height: 100%; // Ensure cards fill the slide height
+    }
+
+    .custom__product-image-container {
+      position: relative; // Needed for positioning the badge and add button
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background-color: #e5e5e5; // Background color from Figma
+      border-radius: 10px; // Rounded corners for the image container (matches card)
+      overflow: hidden; // Ensure image respects border radius
+    }
+
+    .custom__product-badge {
+      position: absolute;
+      top: 8px; // Position from top
+      left: 8px; // Position from left
+      background-color: black;
+      color: white;
+      padding: 0.3rem 0.8rem; // Adjust padding
+      border-radius: 5px; // Rounded corners for badge
+      font-size: 0.8rem;
+      font-weight: bold;
+      z-index: 1; // Ensure badge is above the image
+    }
+
+    .custom__add-button {
+      position: absolute;
+      top: 10px; // Position from top as per Figma
+      right: 10px; // Position from right (Figma shows 406.25 from left on 442.25 width, which is 36px from right. Sticking to 10px for consistency with image and common practice)
+      background-color: transparent; // Make background transparent
+      border-radius: 50%; // Make it round
+      width: 26px; // Button size from Figma
+      height: 26px; // Button size from Figma
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: none; // Remove border if not in Figma
+      cursor: pointer;
+      padding: 0; // Remove padding to control size via width/height
+      z-index: 1; // Ensure button is above the image
+
+      svg {
+        width: 100%; // SVG icon size fills the button
+        height: 100%;
+        color: #2E2BD8;
+      }
+    }
+
+    .custom__product-info {
+      padding: 1rem; // Keep padding
+      text-align: left; // Align text to the left as per Figma
+      flex-grow: 1; // Allow info section to take remaining space
+    }
+
+    .custom__product-name {
+      font-size: 1.1rem; // Keep existing size, adjust if needed
+      font-weight: 400; // Keep bold
+      margin-bottom: 0.2rem; // Reduce margin for closer spacing
+      color: #0D0C22; // Text color from Figma
+    }
+
+    .custom__product-price {
+      font-size: 1rem; // Keep existing size
+      color: #2E2BD8; // Text color from Figma
+      font-weight: 300; // Price seems bold in image/Figma
+    }
+
+    .custom__product-rating {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start; // Align rating and review count to the left
+      margin-top: 0.5rem; // Space between price and rating
+
+      span {
+        font-size: 0.9rem;
+        color: #555; // Adjust color as needed
+        margin-left: 0.5rem; // Space between stars and review count
+      }
+    }
+  }
+}
+
+// Filter Popup
+.filter-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start; // Align sidebar to the left
+  z-index: 1000; // Ensure popup is on top
+
+  &__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); // Semi-transparent black overlay
+    cursor: pointer;
+  }
+
+  &__sidebar {
+    position: relative;
+    width: 300px; // Adjust sidebar width as needed
+    background-color: white;
+    height: 100%;
+    overflow-y: auto; // Enable scrolling if content exceeds height
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); // Optional shadow
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee; // Separator line
+  }
+
+  &__title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  &__close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    svg {
+      width: 20px;
+      height: 20px;
+      stroke: #555; // Adjust color
+    }
+  }
+
+  &__content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #eee; // Separator line
+    cursor: pointer;
+
+    span {
+      font-size: 1rem;
+    }
+
+    svg {
+      width: 16px; // Adjust icon size
+      height: 16px;
+      stroke: #555; // Adjust color
+    }
+  }
+} 

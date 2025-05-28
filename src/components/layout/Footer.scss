@@ -14,7 +14,7 @@
 
   &__divider {
     height: 1px;
-    background-color: #004aad; /* Adjusted to a brighter blue based on image and plugin data */
+    background-color: black; /* Adjusted to a brighter blue based on image and plugin data */
     width: calc(100% - 80px); /* Full width minus padding/margins */
     margin: 0 auto; /* Center the divider */
   }
@@ -40,11 +40,12 @@ margin-bottom: 40px;
   }
   
   &__subscribe-form-container {
-    background-color: #b3a8f4; /* Adjusted to the exact purple from plugin */
+    background-color: black; /* Adjusted to the exact purple from plugin */
     border-radius: 115px; /* Highly rounded corners */
     padding: 12px 20px; /* Adjust padding */
     display: flex;
     align-items: center;
+    color: white;
     border: 1px solid rgba(255, 255, 255, 0.4); /* White border with opacity */
   }
 
@@ -55,7 +56,7 @@ margin-bottom: 40px;
     svg {
       width: 24px;
       height: 24px;
-      stroke: #4f46e5; /* Adjusted stroke color to match text/arrow color from plugin */
+      // stroke: #4f46e5; /* Adjusted stroke color to match text/arrow color from plugin */
     }
   }
   &__content {
@@ -63,7 +64,7 @@ margin-bottom: 40px;
   }
   &__subscribe-text {
     font-size: 1rem;
-    color: #554d9b; /* Adjusted to dark purple/blue from plugin */
+    // color: #554d9b; /* Adjusted to dark purple/blue from plugin */
     margin-right: 20px; /* Space between text and form */
   }
 
@@ -80,9 +81,9 @@ margin-bottom: 40px;
     flex-grow: 1;
     padding: 0 10px; /* Adjust padding */
     font-size: 1rem;
-    color: #4f46e5; /* Purple text color */
+    // color: #4f46e5; /* Purple text color */
     &::placeholder {
-      color: #554d9b; /* Adjusted to dark purple/blue from plugin */
+      color: white; /* Adjusted to dark purple/blue from plugin */
     }
   }
 
@@ -95,7 +96,7 @@ margin-bottom: 40px;
     svg {
       width: 20px;
       height: 20px;
-      stroke: #554d9b; /* Adjusted stroke color to match text/arrow color from plugin */
+      stroke: white; /* Adjusted stroke color to match text/arrow color from plugin */
     }
   }
 
@@ -140,7 +141,7 @@ margin-bottom: 40px;
   &__nav-title {
     font-size: 1rem; /* Adjusted title font size */
     font-weight: 700;
-    color: #004aad; /* Adjusted to blue color from plugin */
+    color: black; /* Adjusted to blue color from plugin */
     margin-bottom: 1rem; /* Space below title */
   }
 
@@ -175,7 +176,18 @@ margin-bottom: 40px;
   &__bottom-nav {
     display: flex;
     gap: 20px; /* Space between bottom links */
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
     flex-wrap: wrap; /* Allow wrapping */
+    &-1 {
+      gap: 50px;    
+      display: flex;
+    }
+    &-2 {
+          display: flex;
+      gap: 50px;
+    }
   }
 
   &__bottom-link {
@@ -188,7 +200,7 @@ margin-bottom: 40px;
     }
 
     &--highlight {
-      color: #ff6f9f; /* Pink highlight color */
+      color: black; /* Pink highlight color */
       font-weight: 700;
     }
   }

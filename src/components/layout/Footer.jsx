@@ -86,15 +86,19 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="footer__bottom">
           <div className="footer__bottom-nav">
-            <Link to="#" className="footer__bottom-link">Privacy Policy</Link>
-            <Link to="#" className="footer__bottom-link">Terms & Conditions</Link>
-            <Link to="#" className="footer__bottom-link">Accessibility</Link>
-            <Link to="#" className="footer__bottom-link footer__bottom-link--highlight">DISCOVER MORE</Link>
-            <Link to="#" className="footer__bottom-link">Shop All Bracelets & Accessories</Link>
-            <Link to="#" className="footer__bottom-link">Custom Bracelets</Link>
-          </div>
-          <div className="footer__copyright">
-            © {new Date().getFullYear()} Glowontheflow
+            <div className="footer__bottom-nav-1">
+              <Link to="#" className="footer__bottom-link">Privacy Policy</Link>
+              <Link to="#" className="footer__bottom-link">Terms & Conditions</Link>
+              <Link to="#" className="footer__bottom-link">Accessibility</Link>
+            </div>
+            <div className="footer__bottom-nav-2"> 
+              <Link to="#" className="footer__bottom-link footer__bottom-link--highlight">DISCOVER MORE</Link>
+              <Link to="#" className="footer__bottom-link">Shop All Bracelets & Accessories</Link>
+              <Link to="/custom" className="footer__bottom-link">Custom Bracelets</Link>
+            </div>
+            <div className="footer__copyright">
+              © {new Date().getFullYear()} Glowontheflow
+            </div>
           </div>
         </div>
       </div>
