@@ -11,6 +11,8 @@ import Charm from './pages/Charm';
 import Login from './pages/Login';
 import NewTrending from './pages/NewTrending';
 import ProductDetail from './pages/ProductDetail';
+import Cart from './pages/Cart';
+import Pay from './pages/Pay';
 
 // Create a client
 const queryClient = new QueryClient();
@@ -30,6 +32,8 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="register" element={<div>RegisterPage</div>} />
             <Route path="product/:id" element={<ProductDetail />} />
+            <Route path="cart" element={<Cart />} />
+            <Route path="pay" element={<Pay />} />
           </Route>
         </Routes>
         <ToastContainer position="top-right" autoClose={3000} />

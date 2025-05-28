@@ -115,7 +115,9 @@ const Custom = () => {
       {/* Category/Content Section */}
       <section className="custom__content-section">
         <div className="container">
-          <img src="/images/logo.svg" alt="Logo" className="custom__logo" /> {/* Logo */}
+          <div style={{width: "100%", display: "flex", justifyContent: "center"}}>
+                      <img src="/images/logo.svg" alt="Logo" className="custom__logo" /> 
+            </div>{/* Logo */}
           <h3 className="custom__category">CATEGORY</h3>
           <h2 className="custom__qr-content-title">CUSTOM QR CONTENT</h2>
         </div>
