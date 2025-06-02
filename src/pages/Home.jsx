@@ -1,33 +1,22 @@
 import './Home.scss';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
+// Import services
+import CharmService from '../services/charm.service';
+import ProductService from '../services/product.service';
+
 // Remove unused imports
 // import Slider from "react-slick";
 // import "slick-carousel/slick/slick.css";
 // import "slick-carousel/slick/slick-theme.css";
-
-const bestSellers = [
-  { name: 'Manifest- The Power of Glow', price: '359.000₫', color: 'blue', bestseller: false, image: '/images/test__1.png' },
-  { name: 'Custom Sea Salt', price: '279.000₫', color: 'pink', bestseller: false, image: '/images/test__1.png' },
-  { name: 'Grace', price: '239.000₫', color: 'blue', bestseller: false, image: '/images/test__1.png' },
-  { name: 'Strong AF', price: '239.000₫', color: 'pink', bestseller: false, image: '/images/test__1.png' },
-  { name: 'Blessed', price: '259.000₫', color: 'blue', bestseller: true, image: '/images/test__1.png' },
-  { name: 'Manifest- The Power of Glow', price: '359.000₫', color: 'blue', bestseller: false, image: '/images/test__1.png' },
-  { name: 'Custom Sea Salt', price: '279.000₫', color: 'pink', bestseller: false, image: '/images/test__1.png' },
-  { name: 'Grace', price: '239.000₫', color: 'blue', bestseller: false, image: '/images/test__1.png' },
-];
-
-const shopTheLook = [
-  { name: "Vintage Hearts Charm Bracelet", price: "569.000₫", image: '/images/test__1.png' },
-  { name: "Trust", price: "649.000₫", image: '/images/test__1.png' },
-  { name: "Strength", price: "649.000₫", image: '/images/test__1.png' },
-];
 
 const slogans = [
   { icon: "/images/Star.png", text: "Courage" },
@@ -40,6 +29,57 @@ const slogans = [
 const Home = () => {
   // Remove unused settings
   // const sloganSliderSettings = { /* ... */ };
+
+  const [charmBestSellers, setCharmBestSellers] = useState([]);
+  const [shopTheLookProducts, setShopTheLookProducts] = useState([]);
+  const [loadingCharms, setLoadingCharms] = useState(true);
+  const [errorCharms, setErrorCharms] = useState(null);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [errorProducts, setErrorProducts] = useState(null);
+
+  useEffect(() => {
+    const fetchCharmBestSellers = async () => {
+      try {
+        setLoadingCharms(true);
+        setErrorCharms(null);
+        const response = await CharmService.getAllCharms();
+        console.log("Fetched all charms for best sellers:", response.data);
+        setCharmBestSellers(response.data || []);
+      } catch (error) {
+        console.error("Error fetching charms:", error);
+        setErrorCharms(error.message || 'Failed to fetch charms');
+        setCharmBestSellers([]);
+      } finally {
+        setLoadingCharms(false);
+      }
+    };
+
+    fetchCharmBestSellers();
+  }, []);
+
+  useEffect(() => {
+    const fetchShopTheLookProducts = async () => {
+      try {
+        setLoadingProducts(true);
+        setErrorProducts(null);
+        const response = await CharmService.getAllCharms();
+        console.log("Fetched all charms for shop the look:", response.data);
+
+        // Take the first 3 charms
+        const firstThreeItems = (response.data || []).slice(0, 3);
+        setShopTheLookProducts(firstThreeItems);
+
+      } catch (error) {
+        console.error("Error fetching charms for shop the look:", error);
+        setErrorProducts(error.message || 'Failed to fetch items for shop the look');
+        setShopTheLookProducts([]);
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+
+    fetchShopTheLookProducts();
+  }, []);
 
   // Duplicate slogans for continuous scroll effect
   const duplicatedSlogans = [...slogans, ...slogans, ...slogans];
@@ -55,40 +95,43 @@ const Home = () => {
       <section className="home__best-sellers">
         <div className="flex-grow container mx-auto px-4 py-8">
         <h2 className="home__section-title">Best Sellers</h2>
-        {/* Swiper component */}
-        <Swiper
-          slidesPerView={4}
-          spaceBetween={20}
-          pagination={{
-            clickable: true,
-          }}
-          // modules={[Pagination]}
-          className="mySwiper"
-        >
-          {bestSellers.map((item) => (
-            <SwiperSlide key={item.name} className="best-seller-card-slide">
-              <div className={`best-seller-card best-seller-card--${item.color}`}>
-                {item.bestseller && <span className="best-seller-card__badge">BESTSELLER</span>}
-                <div className="best-seller-card__image-container">
-                  {/* Image goes here */}
-                  <img src={item.image} alt={item.name} />
-                  <button className="best-seller-card__add-icon">
-                    {/* Plus icon SVG/component goes here */}
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="12" y1="8" x2="12" y2="16"></line>
-                      <line x1="8" y1="12" x2="16" y2="12"></line>
-                    </svg>
-                  </button>
-                </div>
-                <div className="best-seller-card__info">
-                  <div className="best-seller-card__name">{item.name}</div>
-                  <div className="best-seller-card__price">{item.price}</div>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        {loadingCharms ? (
+          <div>Loading charms...</div>
+        ) : errorCharms ? (
+          <div style={{ color: 'red' }}>{errorCharms}</div>
+        ) : charmBestSellers.length === 0 ? (
+          <div>No charms available for best sellers.</div>
+        ) : (
+          <Swiper
+            slidesPerView={4}
+            spaceBetween={20}
+            pagination={{ clickable: true }}
+            className="mySwiper"
+          >
+            {charmBestSellers.map((item) => (
+              <SwiperSlide key={item.id} className="best-seller-card-slide">
+                <Link to={`/charm/${item.id}`} style={{ textDecoration: 'none' }}>
+                  <div className={`best-seller-card`}>
+                    <div className="best-seller-card__image-container">
+                      <img src={item.image} alt={item.charmName} />
+                      <button className="best-seller-card__add-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-plus-circle">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="8" x2="12" y2="16"></line>
+                          <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="best-seller-card__info">
+                      <div className="best-seller-card__name">{item.charmName}</div>
+                      <div className="best-seller-card__price">{item.price.toLocaleString('vi-VN')}₫</div>
+                    </div>
+                  </div>
+                </Link>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        )}
         </div>
       </section>
 
@@ -110,16 +153,26 @@ const Home = () => {
         </div>
         <div className="home__shop-look-list">
           <h3>Shop The Look</h3>
-          {shopTheLook.map((item) => (
-            <div className="shop-look-card" key={item.name}>
-              <img src={item.image} alt={item.name} className="shop-look-card__img" />
-              <div>
-                <div className="shop-look-card__name">{item.name}</div>
-                <div className="shop-look-card__price">{item.price}</div>
-                <button className="shop-look-card__add">ADD TO CART</button>
-              </div>
-            </div>
-          ))}
+          {loadingProducts ? (
+            <div>Loading items...</div>
+          ) : errorProducts ? (
+            <div style={{ color: 'red' }}>{errorProducts}</div>
+          ) : shopTheLookProducts.length === 0 ? (
+            <div>No items available for shop the look.</div>
+          ) : (
+            shopTheLookProducts.map((item) => (
+              <Link to={`/charm/${item.id}`} key={item.id} style={{ textDecoration: 'none' }}>
+                <div className="shop-look-card">
+                  <img src={item.image} alt={item.charmName} className="shop-look-card__img" />
+                  <div>
+                    <div className="shop-look-card__name">{item.charmName}</div>
+                    <div className="shop-look-card__price">{item.price.toLocaleString('vi-VN')}₫</div>
+                    <button className="shop-look-card__add">ADD TO CART</button>
+                  </div>
+                </div>
+              </Link>
+            ))
+          )}
         </div>
       </section>
 

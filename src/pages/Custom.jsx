@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Custom.scss';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -7,26 +7,9 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-const products = [
-  { name: 'Custom Chambray', price: '359.000₫' },
-  { name: 'Custom Chambray', price: '359.000₫' },
-  { name: 'Custom Strand of Pearls', price: '359.000₫' },
-  { name: 'Custom Joyful Stone', price: '359.000₫' },
-  { name: 'Custom Tiny Words Necklace', price: '359.000₫' },
-  { name: 'Custom Sea Salt', price: '359.000₫' },
-  { name: 'Custom Amethyst Dreams Crystal', price: '359.000₫' },
-  { name: 'Custom Pink Chalk', price: '359.000₫' },
-];
-
-const youMayAlsoLikeProducts = [
-  { name: 'Love Club Bead Kit', price: '449.000₫', rating: 4, reviews: 16, badge: null },
-  { name: 'Merch Lover Gift Set', price: '449.000₫', rating: 5, reviews: 179, badge: 'STACK AND SAVE' },
-  { name: 'Hearts by the Pearl Base', price: '449.000₫', rating: 4, reviews: 553, badge: null },
-  { name: 'Self-Love Gift Set', price: '449.000₫', rating: 5, reviews: 179, badge: 'STACK AND SAVE' },
-  { name: 'Bead Kit- L', price: '449.000₫', rating: 4, reviews: 16, badge: null },
-  { name: 'Love Club Bead Kit', price: '449.000₫', rating: 4, reviews: 16, badge: null }, // Adding more for scrolling effect
-  { name: 'Merch Lover Gift Set', price: '449.000₫', rating: 5, reviews: 179, badge: 'STACK AND SAVE' },
-];
+import CharmService from '../services/charm.service';
+import ProductService from '../services/product.service';
+import { Link } from 'react-router-dom';
 
 // Helper component for star rating (simple placeholder)
 const StarRating = ({ rating }) => {
@@ -54,10 +37,56 @@ const StarRating = ({ rating }) => {
 
 const Custom = () => {
   const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
+  const [charmProducts, setCharmProducts] = useState([]);
+  const [loadingCharms, setLoadingCharms] = useState(true);
+  const [errorCharms, setErrorCharms] = useState(null);
+  const [youMayAlsoLikeProducts, setYouMayAlsoLikeProducts] = useState([]);
+  const [loadingYouMayLike, setLoadingYouMayLike] = useState(true);
+  const [errorYouMayLike, setErrorYouMayLike] = useState(null);
 
   const toggleFilterPopup = () => {
     setIsFilterPopupOpen(!isFilterPopupOpen);
   };
+
+  useEffect(() => {
+    const fetchCharmProducts = async () => {
+      try {
+        setLoadingCharms(true);
+        setErrorCharms(null);
+        const response = await CharmService.getAllCharms();
+        console.log("Fetched all charms:", response.data);
+        setCharmProducts(response.data);
+      } catch (error) {
+        console.error("Error fetching charm products:", error);
+        setErrorCharms(error.message || 'Failed to fetch charm products');
+        setCharmProducts([]);
+      } finally {
+        setLoadingCharms(false);
+      }
+    };
+
+    fetchCharmProducts();
+  }, []);
+
+  useEffect(() => {
+    const fetchYouMayAlsoLikeProducts = async () => {
+      try {
+        setLoadingYouMayLike(true);
+        setErrorYouMayLike(null);
+        const response = await ProductService.getAllProducts();
+        console.log("Fetched all products for You May Also Like:", response);
+        setYouMayAlsoLikeProducts(response || []);
+      } catch (error) {
+        console.error("Error fetching You May Also Like products:", error);
+        setErrorYouMayLike(error.message || 'Failed to fetch recommended products');
+        setYouMayAlsoLikeProducts([]);
+      } finally {
+        setLoadingYouMayLike(false);
+      }
+    };
+
+    fetchYouMayAlsoLikeProducts();
+  }, []);
 
   // Swiper settings for You May Also Like section
   const youMayAlsoLikeSwiperSettings = {
@@ -78,25 +107,25 @@ const Custom = () => {
             <div className="filter-popup__header">
               <h3 className="filter-popup__title">Filter & Sort</h3>
               <button className="filter-popup__close-button" onClick={toggleFilterPopup}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>
             <div className="filter-popup__content">
               <div className="filter-popup__option">
                 <span>Sort By</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               </div>
               <div className="filter-popup__option">
                 <span>Category</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               </div>
               <div className="filter-popup__option">
                 <span>Color</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               </div>
               <div className="filter-popup__option">
                 <span>Size</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
               </div>
             </div>
           </div>
@@ -135,22 +164,39 @@ const Custom = () => {
           <div className="custom__filter-sort">
             <button className="custom__filter-sort-button" onClick={toggleFilterPopup}>FILTER & SORT</button>
           </div>
-          <div className="custom__products-grid">
-            {products.map((product, index) => (
-              <div className="custom__product-card" key={index}>
-                <div className="custom__product-image-container">
-                  <img src="/images/test__1.png" alt={product.name} className="custom__product-image" />
-                  <button className="custom__add-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-                  </button>
-                </div>
-                <div className="custom__product-info">
-                  <div className="custom__product-name">{product.name}</div>
-                  <div className="custom__product-price">{product.price}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+          
+          {loadingCharms ? (
+            <div className="custom__loading">Loading charms...</div>
+          ) : errorCharms ? (
+            <div className="custom__error">{errorCharms}</div>
+          ) : (
+            <div className="custom__products-grid">
+              {charmProducts.length === 0 ? (
+                <div className="custom__no-products">No charms available</div>
+              ) : (
+                charmProducts.map((product) => (
+                  <Link 
+                    to={`/charm/${product.id}`}
+                    key={product.id}
+                    style={{ textDecoration: 'none' }}
+                  >
+                    <div className="custom__product-card">
+                      <div className="custom__product-image-container">
+                        <img src={product.image} alt={product.charmName} className="custom__product-image" />
+                        <button className="custom__add-button">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                        </button>
+                      </div>
+                      <div className="custom__product-info">
+                        <div className="custom__product-name">{product.charmName}</div>
+                        <div className="custom__product-price">{product.price.toLocaleString('vi-VN')}₫</div>
+                      </div>
+                    </div>
+                  </Link>
+                ))
+              )}
+            </div>
+          )}
         </div>
       </section>
 
@@ -167,29 +213,30 @@ const Custom = () => {
           <h2 className="custom__you-may-also-like-title">YOU MAY ALSO LIKE</h2>
 
           {/* Swiper for You May Also Like */}
-          <Swiper {...youMayAlsoLikeSwiperSettings}>
-            {youMayAlsoLikeProducts.map((product, index) => (
-               <SwiperSlide key={index}> {/* Wrap each card in SwiperSlide */}
-                 <div className="custom__product-card"> {/* Reuse product card structure */}
-                   <div className="custom__product-image-container">
-                     <img src="/images/test__1.png" alt={product.name} className="custom__product-image" />
-                     {product.badge && <span className="custom__product-badge">{product.badge}</span>} {/* Add badge */}
-                     <button className="custom__add-button">
-                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-                     </button>
-                   </div>
-                   <div className="custom__product-info">
-                     <div className="custom__product-name">{product.name}</div>
-                     <div className="custom__product-price">{product.price}</div>
-                     <div className="custom__product-rating">
-                       <StarRating rating={product.rating} />
-                       <span>{product.reviews} Reviews</span>
-                     </div>
-                   </div>
-                 </div>
-               </SwiperSlide>
-            ))}
-          </Swiper>
+          {loadingYouMayLike ? (
+            <div>Loading recommended products...</div>
+          ) : errorYouMayLike ? (
+            <div style={{ color: 'red' }}>{errorYouMayLike}</div>
+          ) : youMayAlsoLikeProducts.length === 0 ? (
+            <div>No recommended products available.</div>
+          ) : (
+            <Swiper {...youMayAlsoLikeSwiperSettings}>
+              {youMayAlsoLikeProducts.map((product) => (
+                <SwiperSlide key={product.id} style={{ width: 260 }}>
+                  <Link to={`/product/${product.id}`} style={{ textDecoration: 'none' }}>
+                    <div className="related-product-item">
+                      <div className="related-product-img-wrap">
+                        <img src={product.image} alt={product.braceleteName} />
+                        <button className="related-product-add-btn">+</button>
+                      </div>
+                      <div className="related-product-name">{product.braceleteName}</div>
+                      <div className="related-product-price">{product.price.toLocaleString('vi-VN')}₫</div>
+                    </div>
+                  </Link>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
 
           {/* Existing basic structure, keep if needed, or remove */}
           {/* <div className="container">

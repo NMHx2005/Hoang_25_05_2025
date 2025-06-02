@@ -1,6 +1,40 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import AuthService from '../services/auth.service';
 import './Login.scss';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await AuthService.login(formData);
+      toast.success('Đăng nhập thành công!');
+      navigate('/admin/dashboard');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Đăng nhập thất bại');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="login-page">
       {/* The login form will go here */}
@@ -9,13 +43,15 @@ const Login = () => {
         <p className="login-subtitle">Enter your email and password to login:</p>
         <div className="login-form">
           <div className="login-input-group">
-            <input type="email" placeholder="E-mail" className="login-input" />
+            <input type="email" placeholder="E-mail" className="login-input" name="email" value={formData.email} onChange={handleChange} />
           </div>
           <div className="login-input-group login-password-group">
-            <input type="password" placeholder="Password" className="login-input" />
+            <input type="password" placeholder="Password" className="login-input" name="password" value={formData.password} onChange={handleChange} />
             <a href="#" className="login-forgot-password">Forgot your password?</a>
           </div>
-          <button className="login-button">LOGIN</button>
+          <button className="login-button" type="submit" disabled={loading}>
+            {loading ? 'Đang đăng nhập...' : 'LOGIN'}
+          </button>
           <div className="login-signup-text">
             Don't have an account? <a href="#">Sign up</a>
           </div>

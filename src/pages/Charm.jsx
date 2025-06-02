@@ -1,13 +1,44 @@
 import './Charm.scss';
+import { useEffect, useState } from 'react';
+import CharmService from '../services/charm.service';
+import { Link } from 'react-router-dom';
 
 const Charm = () => {
-  // Sample data for small charms
-  const smallCharms = [
-    { name: 'Bow Charm', image: '/images/charm__bow.png' },
-    { name: 'Puffy Heart Charm', image: '/images/charm__heart.png' },
-    { name: 'Puffy Paw Print Charm', image: '/images/charm__paw.png' },
-    { name: 'Evil Eye Charm', image: '/images/charm__eye.png' },
-  ];
+  // Sample data for small charms - remove this
+  // const smallCharms = [
+  //   { name: 'Bow Charm', image: '/images/charm__bow.png' },
+  //   { name: 'Puffy Heart Charm', image: '/images/charm__heart.png' },
+  //   { name: 'Puffy Paw Print Charm', image: '/images/charm__paw.png' },
+  //   { name: 'Evil Eye Charm', image: '/images/charm__eye.png' },
+  // ];
+
+  const [charms, setCharms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCharms = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await CharmService.getAllCharms();
+        console.log("Fetched all charms:", response.data);
+
+        // Take the first 4 charms
+        const firstFourCharms = (response.data || []).slice(0, 4);
+        setCharms(firstFourCharms);
+
+      } catch (error) {
+        console.error("Error fetching charms:", error);
+        setError(error.message || 'Failed to fetch charms');
+        setCharms([]); // Ensure charms is an empty array on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCharms();
+  }, []);
 
   return (
     <div className="charm">
@@ -34,12 +65,22 @@ const Charm = () => {
           </div>
           <div className="charm__small-charms">
             <div className="charm__small-charms-grid">
-              {smallCharms.map((charm, index) => (
-                <div className="charm__small-charm-item" key={index}>
-                  <img src={charm.image} alt={charm.name} />
-                  <p>{charm.name}</p>
-                </div>
-              ))}
+              {loading ? (
+                <div>Loading charms...</div>
+              ) : error ? (
+                <div style={{ color: 'red' }}>{error}</div>
+              ) : charms.length === 0 ? (
+                <div>No charms available.</div>
+              ) : (
+                charms.map((charm) => (
+                  <Link to={`/charm/${charm.id}`} key={charm.id} style={{ textDecoration: 'none' }}>
+                    <div className="charm__small-charm-item">
+                      <img src={charm.image} alt={charm.charmName} />
+                      <p>{charm.charmName}</p>
+                    </div>
+                  </Link>
+                ))
+              )}
             </div>
             <button className="charm__shop-all-button">SHOP ALL CHARMS</button>
           </div>
