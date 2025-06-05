@@ -38,10 +38,34 @@ const ProductService = {
     },
 
     // Search products
-    searchProducts: async (searchTerm) => {
+    searchProducts: async (searchParams = {}) => {
         const response = await axiosInstance.get('/bracelete/search', {
-            params: { q: searchTerm }
+            params: searchParams
         });
+        return response.data;
+    },
+
+    // Get stock by product ID
+    getStockById: async (id) => {
+        const response = await axiosInstance.get(`/bracelete/${id}/stock`);
+        return response.data;
+    },
+
+    // Get all products stock
+    getAllStock: async () => {
+        const response = await axiosInstance.get('/bracelete/stock');
+        return response.data;
+    },
+
+    // Add quantity to product stock
+    addQuantity: async (id, quantity) => {
+        const response = await axiosInstance.post(`/bracelete/${id}/add-quantity`, { quantity });
+        return response.data;
+    },
+
+    // Update product quantity
+    updateQuantity: async (id, quantity) => {
+        const response = await axiosInstance.put(`/bracelete/${id}/quantity`, { quantity });
         return response.data;
     }
 };

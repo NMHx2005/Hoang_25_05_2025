@@ -30,6 +30,7 @@ import Accounts from './pages/admin/Accounts';
 import Help from './pages/admin/Help';
 import ProductList from './pages/admin/ProductList';
 import ProductAdd from './pages/admin/ProductAdd';
+import EditProduct from './pages/admin/EditProduct';
 
 // Create a client
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ function App() {
           <Route path="/admin" element={<Admin />} >
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="product" element={<ProductList />} />
+            <Route path="edit-product/:id" element={<EditProduct />} />
             <Route path="manage-bracelet" element={<ManageBracelet />} />
             <Route path="customer-review" element={<CustomerReview />} />
             <Route path="product-stock" element={<ProductStock />} />
