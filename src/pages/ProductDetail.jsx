@@ -4,6 +4,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { useEffect, useState } from 'react';
 import ProductService from '../services/product.service';
+import CartService from '../services/cart.service';
+import { toast } from 'react-toastify';
 
 const PAIRS_WELL_WITH = [
   {
@@ -34,6 +36,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const fetchProductDetail = async () => {
@@ -67,7 +70,7 @@ const ProductDetail = () => {
         const relatedItemsResponse = await ProductService.getAllProducts();
         console.log("Fetched all products for related:", relatedItemsResponse);
 
-        const filteredRelated = (relatedItemsResponse || []).filter(item => item.id !== currentProduct.id);
+        const filteredRelated = (relatedItemsResponse.data || []).filter(item => item.id !== currentProduct.id);
         setRelatedProducts(filteredRelated);
 
       } catch (err) {
@@ -79,6 +82,20 @@ const ProductDetail = () => {
     fetchProductDetail();
 
   }, [id]);
+
+  const handleAddToCart = () => {
+    if (productDetail) {
+      const itemToAdd = {
+        productType: 1,
+        productId: productDetail.id,
+        quantity: quantity,
+      };
+      CartService.addItem(itemToAdd);
+      toast.success(`${productDetail.braceleteName} added to cart!`);
+    } else {
+      toast.error('Could not add product to cart.');
+    }
+  };
 
   if (loading) {
     return <div style={{ padding: 40 }}>Loading product...</div>;
@@ -102,24 +119,23 @@ const ProductDetail = () => {
           <div className="product-detail__gallery">
             <div className="product-detail__image">
               <img src={productDetail.image} alt={productDetail.braceleteName} />
-              <button className="product-detail__slider-next"></button>
             </div>
           </div>
           <div className="product-detail__info">
             <h1 className="product-detail__title">{productDetail.braceleteName}</h1>
-            <div className="product-detail__price">From <span>{productDetail.price.toLocaleString('vi-VN')}₫</span></div>
+            {productDetail.price && <div className="product-detail__price">From <span>{productDetail.price.toLocaleString('vi-VN')}₫</span></div>}
             <div className="product-detail__size-row">
               <span>Size</span>
               <div className="product-detail__sizes">
-                <button className="active">{productDetail.size}</button>
+                {productDetail.size && <button className="active">{productDetail.size}</button>}
               </div>
               <a href="#" className="product-detail__find-size">Find your size</a>
             </div>
             <div className="product-detail__qty-row">
-              <button>-</button>
-              <span>1</span>
-              <button>+</button>
-              <button className="product-detail__customize-btn">START CUSTOMIZING</button>
+              <button onClick={() => setQuantity(prev => Math.max(1, prev - 1))}>-</button>
+              <span>{quantity}</span>
+              <button onClick={() => setQuantity(prev => prev + 1)}>+</button>
+              <button className="product-detail__customize-btn" onClick={handleAddToCart}>Thêm Vào Giỏ Hàng</button>
             </div>
             <div className="product-detail__desc-block">
               <div className="product-detail__desc-title">Description</div>
@@ -175,7 +191,7 @@ const ProductDetail = () => {
                       <button className="related-product-add-btn">+</button>
                     </div>
                     <div className="related-product-name">{item.braceleteName}</div>
-                    <div className="related-product-price">{item.price.toLocaleString('vi-VN')}₫</div>
+                    {item.price && <div className="related-product-price">{item.price.toLocaleString('vi-VN')}₫</div>}
                   </div>
                 </Link>
               </SwiperSlide>

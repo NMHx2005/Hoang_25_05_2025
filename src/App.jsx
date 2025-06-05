@@ -13,8 +13,11 @@ import NewTrending from './pages/NewTrending';
 import ProductDetail from './pages/ProductDetail';
 import CharmDetail from './pages/CharmDetail';
 import Cart from './pages/Cart';
-import Pay from './pages/Pay';
+import Checkout from './pages/Checkout';
+import OrderSuccess from './pages/OrderSuccess';
 import Admin from './pages/admin/Admin';
+import Register from './pages/Register';
+import Account from './pages/Account';
 
 // Import admin page components
 import Dashboard from './pages/admin/Dashboard';
@@ -62,11 +65,13 @@ function App() {
             <Route path="about" element={<div>About Page</div>} />
             <Route path="contact" element={<div>Contact Page</div>} />
             <Route path="login" element={<Login />} />
-            <Route path="register" element={<div>RegisterPage</div>} />
+            <Route path="register" element={<Register />} />
+            <Route path="account" element={<Account />} />
             <Route path="product/:id" element={<ProductDetail />} />
             <Route path="charm/:id" element={<CharmDetail />} />
             <Route path="cart" element={<Cart />} />
-            <Route path="pay" element={<Pay />} />
+            <Route path="checkout" element={<Checkout />} />
+            <Route path="order-success" element={<OrderSuccess />} />
           </Route>
         </Routes>
         <ToastContainer position="top-right" autoClose={3000} />

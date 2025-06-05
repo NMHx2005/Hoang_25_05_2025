@@ -4,6 +4,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { useEffect, useState } from 'react';
 import CharmService from '../services/charm.service'; // Use CharmService
+import CartService from '../services/cart.service'; // Import CartService
+import { toast } from 'react-toastify'; // Import toast
 
 // PAIRS_WELL_WITH can be kept or removed/updated as needed for Charms
 const PAIRS_WELL_WITH = [
@@ -35,6 +37,7 @@ const CharmDetail = () => { // Renamed component
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [relatedCharms, setRelatedCharms] = useState([]); // Renamed state
+  const [selectedQuantity, setSelectedQuantity] = useState(1); // Add state for selected quantity
 
   useEffect(() => {
     const fetchCharmDetail = async () => { // Renamed function
@@ -83,6 +86,18 @@ const CharmDetail = () => { // Renamed component
 
   }, [id]); // isCharm dependency removed
 
+  const handleAddToCart = () => {
+    if (charmDetail) {
+      const cartItem = {
+        productId: charmDetail.id,
+        productType: 2,
+        quantity: selectedQuantity, // Use the selected quantity
+      };
+      CartService.addItem(cartItem);
+      toast.success(`${charmDetail.charmName} đã được thêm vào giỏ hàng!`);
+    }
+  };
+
   if (loading) {
     return <div style={{ padding: 40 }}>Loading charm...</div>; // Update loading message
   }
@@ -119,10 +134,10 @@ const CharmDetail = () => { // Renamed component
               <a href="#" className="product-detail__find-size">Find your size</a>
             </div>
             <div className="product-detail__qty-row">
-              <button>-</button>
-              <span>1</span>
-              <button>+</button>
-              <button className="product-detail__customize-btn">START CUSTOMIZING</button>
+              <button onClick={() => setSelectedQuantity(prev => Math.max(1, prev - 1))}>-</button>
+              <span>{selectedQuantity}</span>
+              <button onClick={() => setSelectedQuantity(prev => prev + 1)}>+</button>
+              <button className="product-detail__customize-btn" onClick={handleAddToCart}>Thêm Vào Giỏ Hàng</button>
             </div>
             <div className="product-detail__desc-block">
               <div className="product-detail__desc-title">Description</div>
