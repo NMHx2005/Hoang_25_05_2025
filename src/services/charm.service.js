@@ -1,8 +1,8 @@
 import axiosInstance from './axios.config';
 
 class CharmService {
-    getAllCharms() {
-        return axiosInstance.get('/Charm');
+    getAllCharms(params = {}) {
+        return axiosInstance.get('/Charm', { params });
     }
 
     getCharmById(id) {
@@ -21,20 +21,32 @@ class CharmService {
         return axiosInstance.delete(`/Charm/${id}`);
     }
 
+    uploadCharmGif(gifData) {
+        return axiosInstance.post('/Charm/upload-gif', gifData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+    }
+
     getCharmStockById(id) {
         return axiosInstance.get(`/Charm/${id}/stock`);
     }
 
-    getAllCharmStock() {
-        return axiosInstance.get('/Charm/stock');
+    getAllCharmStock(params = {}) {
+        return axiosInstance.get('/Charm/stock', { params });
     }
 
-    updateCharmQuantity(id, quantity) {
-        return axiosInstance.put(`/Charm/${id}/quantity`, { quantity });
+    updateCharmQuantity(id, quantityData) {
+        return axiosInstance.put(`/Charm/${id}/quantity`, quantityData);
     }
 
-    addCharmStock(id, quantity) {
-        return axiosInstance.post(`/Charm/${id}/add-stock`, { quantity });
+    addCharmStock(id, quantityData) {
+        return axiosInstance.post(`/Charm/${id}/add-stock`, quantityData);
+    }
+
+    searchCharms(searchParams = {}) {
+        return axiosInstance.get('/Charm/search', { params: searchParams });
     }
 
     // You can add other methods here for specific charm operations (e.g., getCharmById)

@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import ProductService from '../services/product.service';
 import CartService from '../services/cart.service';
 import { toast } from 'react-toastify';
+import ReviewService from '../services/review.service';
+import AuthService from '../services/auth.service';
 
 const PAIRS_WELL_WITH = [
   {
@@ -37,6 +39,10 @@ const ProductDetail = () => {
   const [error, setError] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [quantity, setQuantity] = useState(1);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const isAuthenticated = AuthService.isAuthenticated();
 
   useEffect(() => {
     const fetchProductDetail = async () => {
@@ -95,6 +101,20 @@ const ProductDetail = () => {
     } else {
       toast.error('Could not add product to cart.');
     }
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      await ReviewService.createReview({ productId: productDetail.id, rating, comment });
+      toast.success('Gửi đánh giá thành công!');
+      setRating(5);
+      setComment('');
+    } catch {
+      toast.error('Gửi đánh giá thất bại!');
+    }
+    setSubmitting(false);
   };
 
   if (loading) {
@@ -199,6 +219,22 @@ const ProductDetail = () => {
           </Swiper>
         </div>
       </div>
+      {isAuthenticated && (
+        <div className="review-form-section">
+          <h3>Đánh giá sản phẩm</h3>
+          <form className="review-form" onSubmit={handleReviewSubmit}>
+            <label>Chọn số sao:
+              <select value={rating} onChange={e => setRating(Number(e.target.value))}>
+                {[1,2,3,4,5].map(star => <option key={star} value={star}>{star}</option>)}
+              </select>
+            </label>
+            <label>Bình luận:
+              <textarea value={comment} onChange={e => setComment(e.target.value)} required rows={3} />
+            </label>
+            <button type="submit" disabled={submitting} className="review-submit-btn">Gửi đánh giá</button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

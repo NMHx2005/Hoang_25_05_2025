@@ -21,7 +21,6 @@ import Account from './pages/Account';
 
 // Import admin page components
 import Dashboard from './pages/admin/Dashboard';
-import ManageBracelet from './pages/admin/ManageBracelet';
 import CustomerReview from './pages/admin/CustomerReview';
 import ProductStock from './pages/admin/ProductStock';
 import Settings from './pages/admin/Settings';
@@ -31,6 +30,16 @@ import Help from './pages/admin/Help';
 import ProductList from './pages/admin/ProductList';
 import ProductAdd from './pages/admin/ProductAdd';
 import EditProduct from './pages/admin/EditProduct';
+import ManageCharm from './pages/admin/ManageCharm';
+// Import Charm management pages
+import AddCharm from './pages/admin/AddCharm';
+import EditCharm from './pages/admin/EditCharm';
+import ManageCategories from './pages/admin/ManageCategories';
+import ManageOrders from './pages/admin/ManageOrders';
+import ViewGifs from './pages/admin/ViewGifs';
+import ManageCharmCategory from './pages/admin/ManageCharmCategory';
+import ManageMaterial from './pages/admin/ManageMaterial';
+import ManageTheme from './pages/admin/ManageTheme';
 
 // Create a client
 const queryClient = new QueryClient();
@@ -45,7 +54,7 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="product" element={<ProductList />} />
             <Route path="edit-product/:id" element={<EditProduct />} />
-            <Route path="manage-bracelet" element={<ManageBracelet />} />
+            <Route path="manage-charm" element={<ManageCharm />} />
             <Route path="customer-review" element={<CustomerReview />} />
             <Route path="product-stock" element={<ProductStock />} />
             <Route path="settings" element={<Settings />} />
@@ -56,6 +65,15 @@ function App() {
             <Route index element={<Dashboard />} /> {/* Redirect or show default admin page */}
             {/* Add route for Add Product page */}
             <Route path="add-product" element={<ProductAdd />} />
+            {/* Add routes for Charm management pages */}
+            <Route path="add-charm" element={<AddCharm />} />
+            <Route path="edit-charm/:id" element={<EditCharm />} />
+            <Route path="manage-categories" element={<ManageCategories />} />
+            <Route path="manage-orders" element={<ManageOrders />} />
+            <Route path="view-gifs" element={<ViewGifs />} />
+            <Route path="manage-charm-category" element={<ManageCharmCategory />} />
+            <Route path="manage-material" element={<ManageMaterial />} />
+            <Route path="manage-theme" element={<ManageTheme />} />
           </Route>
 
           {/* Client Routes */}
