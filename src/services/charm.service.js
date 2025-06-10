@@ -33,16 +33,20 @@ class CharmService {
         return axiosInstance.get(`/Charm/${id}/stock`);
     }
 
-    getAllCharmStock(params = {}) {
-        return axiosInstance.get('/Charm/stock', { params });
+    getCharmInventory(params = {}) {
+        return axiosInstance.get('/charm-inventory', { params });
     }
 
-    updateCharmQuantity(id, quantityData) {
-        return axiosInstance.put(`/Charm/${id}/quantity`, quantityData);
+    addCharmStock(id, quantity) {
+        return axiosInstance.post(`/charm-inventory/${id}/add-stock`, { quantity });
     }
 
-    addCharmStock(id, quantityData) {
-        return axiosInstance.post(`/Charm/${id}/add-stock`, quantityData);
+    addCharmQuantity(id, quantity) {
+        return axiosInstance.post(`/Charm/${id}/add-stock`, null, { params: { quantity } });
+    }
+
+    updateCharmQuantity(id, quantity) {
+        return axiosInstance.put(`/Charm/${id}/quantity`, null, { params: { quantity, isAddition: false } });
     }
 
     searchCharms(searchParams = {}) {

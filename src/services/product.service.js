@@ -47,18 +47,23 @@ const ProductService = {
         return response.data;
     },
 
-    getAllStock: async () => {
-        const response = await axiosInstance.get('/bracelete/stock');
+    getBraceletInventory: async () => {
+        const response = await axiosInstance.get('/bracelet-inventory');
         return response.data;
     },
 
-    addQuantity: async (id, quantityData) => {
-        const response = await axiosInstance.post(`/bracelete/${id}/add-quantity`, quantityData);
+    addBraceletStock: async (id, quantity) => {
+        const response = await axiosInstance.post(`/bracelet-inventory/${id}/add-stock`, { quantity });
         return response.data;
     },
 
-    updateQuantity: async (id, quantityData) => {
-        const response = await axiosInstance.put(`/bracelete/${id}/quantity`, quantityData);
+    addBraceleteQuantity: async (id, quantity) => {
+        const response = await axiosInstance.post(`/bracelete/${id}/add-quantity`, null, { params: { quantity }, headers: { 'Content-Type': null } });
+        return response.data;
+    },
+
+    updateBraceleteQuantity: async (id, quantity) => {
+        const response = await axiosInstance.put(`/bracelete/${id}/quantity?quantity=${quantity}&isAddition=false`, null, { params: { quantity, isAddition: false }, headers: { 'Content-Type': null } });
         return response.data;
     },
 

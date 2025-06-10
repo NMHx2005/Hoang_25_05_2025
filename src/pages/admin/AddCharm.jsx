@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CharmService from '../../services/charm.service';
+import CategoryService from '../../services/category.service';
 import { toast } from 'react-toastify';
 import './addCharm.scss'; // Assuming a SCSS file for styling
 
 const AddCharm = () => {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
 
   // State for form data - Adjust properties based on your Charm API structure
   const [charmData, setCharmData] = useState({
@@ -22,6 +24,21 @@ const AddCharm = () => {
   });
 
   const [loading, setLoading] = useState(false);
+
+  // Fetch categories when component mounts
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await CategoryService.getAllCharmCategories();
+        setCategories(response);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        toast.error('Không thể tải danh mục Charm');
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -93,14 +110,21 @@ const AddCharm = () => {
             ></textarea>
           </div>
            <div>
-            <label htmlFor="charmCategoryId">Mã danh mục Charm:</label>
-            <input 
-              type="number" 
-              id="charmCategoryId" 
+            <label htmlFor="charmCategoryId">Danh mục Charm:</label>
+            <select
+              id="charmCategoryId"
               name="charmCategoryId"
               value={charmData.charmCategoryId}
               onChange={handleInputChange}
-            />
+              required
+            >
+              <option value="">Chọn danh mục</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.categoryName}
+                </option>
+              ))}
+            </select>
           </div>
            <div>
             <label htmlFor="color">Màu sắc:</label>

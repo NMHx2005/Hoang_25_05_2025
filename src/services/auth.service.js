@@ -1,52 +1,55 @@
 import axiosInstance from './axios.config';
+import {jwtDecode} from 'jwt-decode';
 
 const AuthService = {
     // Đăng nhập
-    login: async (credentials) => {
-        const response = await axiosInstance.post('/user/login', credentials);
-        console.log(response);
+    login: async (username, password) => {
+        const response = await axiosInstance.post('/user/login', { userName: username, password });
+        console.log(response.data);
         if (response.data.accessToken) {
-            localStorage.setItem('token', response.data.accessToken);
-            localStorage.setItem('userId', response.data.userId);
+            localStorage.setItem('user', JSON.stringify(response.data));
         }
         return response.data;
     },
 
     // Đăng ký người dùng mới
-    register: async (userData) => {
-        const response = await axiosInstance.post('/user/register', userData);
+    register: async (username, email, password) => {
+        const response = await axiosInstance.post('/user/register', { userName: username, email, password });
         return response.data;
     },
 
     // Đăng xuất
-    logout: async () => {
-        try {
-            await axiosInstance.post('/user/logout');
-        } catch (error) {
-            console.error('Logout failed on server, but clearing local storage.', error);
-        } finally {
-            localStorage.removeItem('token');
-            localStorage.removeItem('userId');
-            localStorage.removeItem('user');
-        }
+    logout: () => {
+        localStorage.removeItem('user');
     },
 
     // Lấy thông tin user hiện tại bằng cách gọi API /api/user/{id}
-    getCurrentUser: async () => {
-        const userId = localStorage.getItem('userId');
-        if (userId) {
+    getCurrentUser: () => {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
             try {
-                const user = await AuthService.getUserById(userId);
-                return user;
+                const user = JSON.parse(userStr);
+                // Ensure user and user.accessToken exist before attempting to decode
+                if (user && user.accessToken) {
+                    const decodedToken = jwtDecode(user.accessToken);
+                    if (decodedToken.exp * 1000 < Date.now()) {
+                        AuthService.logout(); // Token expired
+                        return null;
+                    }
+                    return user; // Token valid
+                } else {
+                    // If user object is malformed or accessToken is missing, log out and return null
+                    console.warn("User data or accessToken missing in localStorage. Logging out.");
+                    AuthService.logout();
+                    return null;
+                }
             } catch (error) {
-                console.error('Failed to fetch current user data:', error);
-                localStorage.removeItem('token');
-                localStorage.removeItem('userId');
-                localStorage.removeItem('user');
+                console.error("Error parsing user data from localStorage or decoding token:", error);
+                AuthService.logout();
                 return null;
             }
         }
-        return null;
+        return null; // No user string in localStorage
     },
 
     // Kiểm tra xem user đã đăng nhập chưa (kiểm tra token hoặc userId trong local storage)
@@ -89,7 +92,7 @@ const AuthService = {
 
     // Lấy tất cả users
     getAllUsers: async () => {
-        const response = await axiosInstance.get('/user');
+        const response = await axiosInstance.get('/User');
         return response.data;
     },
 
@@ -103,7 +106,33 @@ const AuthService = {
     confirmEmail: async (token) => {
         const response = await axiosInstance.post('/user/confirm-email', { token });
         return response.data;
-    }
+    },
+
+    // New method for updating user profile
+    updateUserProfile: async (userId, updatedFields) => {
+        const patchOperations = [];
+        for (const key in updatedFields) {
+            if (Object.prototype.hasOwnProperty.call(updatedFields, key)) {
+                patchOperations.push({
+                    op: "replace",
+                    path: `/${key}`,
+                    value: updatedFields[key]
+                });
+            }
+        }
+
+        if (patchOperations.length === 0) {
+            console.log("No changes to apply.");
+            return Promise.resolve(null); // Return a resolved promise if no changes
+        }
+
+        const response = await axiosInstance.patch(`/User/${userId}`, patchOperations, {
+            headers: {
+                'Content-Type': 'application/json-patch+json'
+            }
+        });
+        return response.data;
+    },
 };
 
 export default AuthService; 

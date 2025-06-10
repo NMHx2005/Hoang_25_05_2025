@@ -134,10 +134,10 @@ const Admin = () => {
       </aside>
       <div className="admin-main">
         <AdminHeader />
-        <div style={{padding: "30px"}}>
+        <div style={{ padding: "30px" }}>
           <Outlet />
         </div>
-        <Footer/>
+        {/* <Footer/> */}
         <footer className="admin-footer">
           <div>© 2024 Admin Dashboard. All rights reserved.</div>
         </footer>

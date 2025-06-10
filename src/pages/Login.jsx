@@ -25,9 +25,21 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await AuthService.login(formData);
+      await AuthService.login(formData.userName, formData.password);
       toast.success('Đăng nhập thành công!');
-      navigate('/');
+
+      const currentUser = AuthService.getCurrentUser();
+      console.log(currentUser);
+      if (currentUser && currentUser.roleId) {
+        if (Number(currentUser.roleId) == 1) {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
+      } else {
+        console.warn("User logged in, but roleId not found. Redirecting to home.");
+        navigate('/');
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Đăng nhập thất bại');
     } finally {

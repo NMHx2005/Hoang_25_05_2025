@@ -103,57 +103,87 @@
   border-radius: 18px;
   padding: 36px 32px 28px 32px;
   min-width: 340px;
-  max-width: 420px;
+  max-width: 600px;
   box-shadow: 0 4px 32px rgba(0,0,0,0.13);
   text-align: center;
   margin: 0 auto;
 }
 .modal-content h2 {
   color: #ff92a9;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 800;
-  margin-bottom: 18px;
+  margin-bottom: 24px;
 }
 .admin-form {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
   margin-bottom: 0;
   align-items: stretch;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 }
 .admin-form label {
-  font-weight: 500;
+  font-weight: 600;
   color: #444;
-  margin-bottom: 2px;
-  font-size: 1rem;
+  margin-bottom: 0;
+  font-size: 0.95rem;
   text-align: left;
 }
 .admin-form input, .admin-form select {
   border: 1.5px solid #e3e8ee;
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   font-size: 1rem;
   outline: none;
-  margin-bottom: 2px;
+  margin-bottom: 0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: #ff92a9;
+    box-shadow: 0 0 0 3px rgba(255, 146, 169, 0.2);
+  }
+}
+.admin-form select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"%3E%3Cpath fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 1.2em;
+  padding-right: 30px;
 }
 @media (min-width: 600px) {
   .admin-form {
-    display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px 18px;
+    gap: 16px 24px;
+
+    .form-group {
+      &:nth-of-type(1),
+      &:nth-of-type(2),
+      &:nth-of-type(3),
+      &:nth-of-type(4) {
+        grid-column: span 2;
+      }
+      &:nth-of-type(n+5) {
+        grid-column: span 1;
+      }
+    }
   }
-  .admin-form label {
-    grid-column: span 2;
-    margin-bottom: 0;
-  }
-  .admin-form input, .admin-form select {
-    grid-column: span 2;
-  }
-  .admin-form input[type="number"],
-  .admin-form input[type="tel"],
-  .admin-form select[name="status"],
-  .admin-form select[name="confirmEmail"] {
-    grid-column: span 1;
+}
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  grid-column: span 2;
+
+  button {
+    flex: 1;
   }
 }
 .save-btn {
@@ -164,7 +194,6 @@
   border-radius: 22px;
   padding: 13px 0;
   font-size: 1.08rem;
-  margin-top: 12px;
   width: 100%;
   cursor: pointer;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
@@ -182,7 +211,6 @@
   border-radius: 22px;
   padding: 11px 0;
   font-size: 1.08rem;
-  margin-top: 8px;
   width: 100%;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;

@@ -5,18 +5,26 @@ const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'https://localhost:7213/api',
     timeout: 10000,
     headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        // Removed default Content-Type and Accept headers
     },
 });
 
 // Request interceptor
 axiosInstance.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+            const user = JSON.parse(userStr);
+            if (user && user.accessToken) {
+                config.headers.Authorization = `Bearer ${user.accessToken}`;
+            }
         }
+
+        // Explicitly remove Content-Type header for GET requests or requests with no data
+        if (config.method === 'get' || config.data === null || config.data === undefined) {
+            delete config.headers['Content-Type'];
+        }
+
         return config;
     },
     (error) => {

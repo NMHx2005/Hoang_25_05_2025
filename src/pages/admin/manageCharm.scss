@@ -126,33 +126,44 @@
             }
         }
 
-        td .action-buttons {
-            display: flex;
-            gap: 5px;
+        td {
+            .action-buttons {
+                display: flex;
+                gap: 5px;
 
-            button {
-                padding: 5px 10px;
-                border: none;
-                border-radius: 3px;
-                cursor: pointer;
-                font-size: 12px;
-                transition: background-color 0.3s ease;
+                .action-btn {
+                    padding: 5px 10px;
+                    border: none;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    font-size: 12px; /* Adjusted to be slightly smaller for a compact look */
+                    transition: background-color 0.3s ease;
+                    color: white; /* Default text color for all action buttons */
+                    min-width: 60px; /* Ensure consistent width */
+                    text-align: center;
 
-                &.edit {
-                    background-color: #ffc107; /* Yellow */
-                    color: #212529;
+                    &.view-details {
+                        background-color: #6c757d; // Grey
 
-                    &:hover {
-                        background-color: #e0a800;
+                        &:hover {
+                            background-color: #5a6268;
+                        }
                     }
-                }
 
-                &.delete {
-                    background-color: #dc3545; /* Red */
-                    color: white;
+                    &.edit {
+                        background-color: #007bff; // Blue
 
-                    &:hover {
-                        background-color: #c82333;
+                        &:hover {
+                            background-color: #0056b3;
+                        }
+                    }
+
+                    &.delete {
+                        background-color: #dc3545; // Red
+
+                        &:hover {
+                            background-color: #c82333;
+                        }
                     }
                 }
             }

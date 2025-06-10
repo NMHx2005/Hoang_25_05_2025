@@ -44,6 +44,16 @@ const OrderService = {
         const response = await axiosInstance.get('/Order/get-revenue-by-period', { params }); // Assuming period is passed as query params
         return response.data;
     },
+
+    getOrders: async () => {
+        const response = await axiosInstance.get('/Order/get-orders');
+        return response.data;
+    },
+
+    getOrdersByUserId: async (userId) => {
+        const response = await axiosInstance.get(`/Order/get-orders-by-user/${userId}`);
+        return response.data;
+    },
 };
 
 export default OrderService; 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import OrderService from '../../services/order.service';
 import AuthService from '../../services/auth.service';
+import DeliveryService from '../../services/delivery.service';
 import './ManageMaterial.scss';
 
 const DEFAULT_SHIPPERS = [
@@ -30,11 +31,17 @@ const ManageOrders = () => {
 
   const fetchShippers = async () => {
     try {
-      // Giả sử có API lấy danh sách shipper
-      const res = await OrderService.getAllShippers();
-      if (Array.isArray(res) && res.length > 0) setShippers(res);
-      else setShippers(DEFAULT_SHIPPERS);
-    } catch {
+      const res = await AuthService.getAllUsers();
+      if (Array.isArray(res) && res.length > 0) {
+        const shipperAccounts = res
+          .filter(user => user.role === 4)
+          .map(user => ({ id: user.id, name: user.fullname || user.userName }));
+        setShippers(shipperAccounts);
+      } else {
+        setShippers(DEFAULT_SHIPPERS);
+      }
+    } catch (error) {
+      console.error('Error fetching shippers:', error);
       setShippers(DEFAULT_SHIPPERS);
     }
   };
@@ -58,10 +65,11 @@ const ManageOrders = () => {
   const handleAssignShipper = async (orderId, shipperId) => {
     setAssigning(a => ({ ...a, [orderId]: true }));
     try {
-      await OrderService.createAndAssignDelivery(shipperId, { orderIds: [orderId] });
+      await DeliveryService.createAndAssignDelivery(shipperId, [orderId]);
       toast.success('Đã gán đơn cho shipper!');
       fetchOrders();
-    } catch {
+    } catch (error) {
+      console.error('Error assigning shipper:', error);
       toast.error('Không thể gán đơn!');
     }
     setAssigning(a => ({ ...a, [orderId]: false }));
@@ -71,10 +79,11 @@ const ManageOrders = () => {
   const handleUpdateDelivery = async (orderId, deliveryStatus, paymentStatus) => {
     setAssigning(a => ({ ...a, [orderId]: true }));
     try {
-      await OrderService.updateDeliveryStatus(orderId, { deliveryStatus, paymentStatus });
+      await DeliveryService.updateDeliveryStatus(orderId, { deliveryStatus, paymentStatus });
       toast.success('Cập nhật trạng thái thành công!');
       fetchOrders();
-    } catch {
+    } catch (error) {
+      console.error('Error updating delivery status:', error);
       toast.error('Không thể cập nhật trạng thái!');
     }
     setAssigning(a => ({ ...a, [orderId]: false }));

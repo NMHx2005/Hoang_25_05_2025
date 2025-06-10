@@ -200,10 +200,12 @@ function ManageCharm() {
                 <span className={`status ${charm.isActive ? 'active' : 'inactive'}`}>
                   {charm.isActive ? 'Active' : 'Inactive'}
                 </span>
-              </td><td>
+              </td>
+              <td>
                 <div className="action-buttons">
-                  <button className="edit" onClick={() => navigate(`/admin/edit-charm/${charm.id}`)}>Sửa</button>
-                  <button className="delete" onClick={() => handleDelete(charm.id)}>Xóa</button>
+                  <button className="action-btn view-details" onClick={() => navigate(`/admin/charm-detail/${charm.id}`)}>Xem chi tiết</button>
+                  <button className="action-btn edit" onClick={() => navigate(`/admin/edit-charm/${charm.id}`)}>Sửa</button>
+                  <button className="action-btn delete" onClick={() => handleDelete(charm.id)}>Xóa</button>
                 </div>
               </td>
             </tr>

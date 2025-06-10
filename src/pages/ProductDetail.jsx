@@ -76,7 +76,7 @@ const ProductDetail = () => {
         const relatedItemsResponse = await ProductService.getAllProducts();
         console.log("Fetched all products for related:", relatedItemsResponse);
 
-        const filteredRelated = (relatedItemsResponse.data || []).filter(item => item.id !== currentProduct.id);
+        const filteredRelated = (relatedItemsResponse || []).filter(item => item.id !== currentProduct.id);
         setRelatedProducts(filteredRelated);
 
       } catch (err) {

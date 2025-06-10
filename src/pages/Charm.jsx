@@ -82,7 +82,9 @@ const Charm = () => {
                 ))
               )}
             </div>
-            <button className="charm__shop-all-button">SHOP ALL CHARMS</button>
+            <Link to="/custom#custom__radio-image-section">
+              <button className="charm__shop-all-button">SHOP ALL CHARMS</button>
+            </Link>
           </div>
         </div>
       </section>

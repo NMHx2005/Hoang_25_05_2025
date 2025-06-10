@@ -605,25 +605,27 @@
 }
 
 .home__categories-title {
-  font-size: 3rem;
-  font-weight: 200;
-  margin: 0 0 45px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: #fff;
 }
 
 .home__categories-button {
-  background-color: #000000;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 18px 40px;
+  background-color: black;
+  color: white;
+  border: 2px solid black;
+  border-radius: 25px; /* Rounded corners */
+  padding: 0.8rem 2rem;
+  font-weight: 600;
   font-size: 1rem;
-  font-weight: 500;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: background-color 0.2s ease-in-out;
+  transition: all 0.3s ease;
 
   &:hover {
-    background-color: #e67e91; /* Darker pink on hover */
+    background-color: transparent; /* Transparent background on hover */
+    color: white;
+    border-color: white;
   }
 }
 

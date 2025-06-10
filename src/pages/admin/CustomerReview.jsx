@@ -44,10 +44,11 @@ function CustomerReview() {
             <tr>
               <th>ID</th>
               <th>User ID</th>
+              <th>Product Type</th>
               <th>Product ID</th>
               <th>Rating</th>
-              <th>Nội dung</th>
-              <th>Ngày tạo</th>
+              <th>Comment</th>
+              <th>Review Date</th>
               <th>Thao tác</th>
             </tr>
           </thead>
@@ -56,10 +57,11 @@ function CustomerReview() {
               <tr key={rv.id}>
                 <td>{rv.id}</td>
                 <td>{rv.userId}</td>
-                <td>{rv.productId}</td>
+                <td>{rv.braceletId ? 'Bracelet' : 'Charm'}</td>
+                <td>{rv.braceletId || rv.charmId}</td>
                 <td>{rv.rating}</td>
-                <td>{rv.content}</td>
-                <td>{rv.createdAt ? new Date(rv.createdAt).toLocaleString() : ''}</td>
+                <td>{rv.comment}</td>
+                <td>{rv.reviewDate ? new Date(rv.reviewDate).toLocaleString() : 'N/A'}</td>
                 <td>
                   <button className="action-btn delete" onClick={() => handleDelete(rv.id)}>Xóa</button>
                 </td>

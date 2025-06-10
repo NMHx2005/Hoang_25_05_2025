@@ -74,23 +74,29 @@ function Accounts() {
           password: form.password || undefined,
           phoneNumber: form.phoneNumber,
           points: form.points,
-          role: form.role,
+          role: parseInt(form.role),
           status: form.status,
           confirmEmail: form.confirmEmail,
         });
         toast.success('Cập nhật tài khoản thành công!');
       } else {
-        await AuthService.register({
+        const accountData = {
           userName: form.userName,
           fullname: form.fullname,
           email: form.email,
           password: form.password,
           phoneNumber: form.phoneNumber,
           points: form.points,
-          role: form.role,
+          role: parseInt(form.role),
           status: form.status,
           confirmEmail: form.confirmEmail,
-        });
+        };
+
+        if (form.role === '1' || form.role === '3' || form.role === '4') {
+          await AuthService.createStaffAdminShipperAccount(accountData);
+        } else {
+          await AuthService.register(accountData);
+        }
         toast.success('Thêm tài khoản thành công!');
       }
       setShowModal(false);
@@ -164,38 +170,58 @@ function Accounts() {
           <div className="modal-content">
             <h2>{isEdit ? 'Sửa tài khoản' : 'Thêm tài khoản'}</h2>
             <form onSubmit={handleSubmit} className="admin-form">
-              <label>Tài khoản</label>
-              <input value={form.userName} onChange={e => setForm({ ...form, userName: e.target.value })} required />
-              <label>Họ tên</label>
-              <input value={form.fullname} onChange={e => setForm({ ...form, fullname: e.target.value })} />
-              <label>Email</label>
-              <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
-              <label>Password</label>
-              <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required={!isEdit} />
-              <label>Số điện thoại</label>
-              <input value={form.phoneNumber} onChange={e => setForm({ ...form, phoneNumber: e.target.value })} />
-              <label>Điểm</label>
-              <input type="number" value={form.points} onChange={e => setForm({ ...form, points: Number(e.target.value) })} />
-              <label>Vai trò</label>
-              <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} required>
-                <option value="">Chọn vai trò</option>
-                <option value="1">Admin</option>
-                <option value="2">User</option>
-                <option value="3">Staff</option>
-                <option value="4">Shipper</option>
-              </select>
-              <label>Trạng thái</label>
-              <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value === 'true' })}>
-                <option value="true">Hoạt động</option>
-                <option value="false">Ngừng</option>
-              </select>
-              <label>Xác nhận email</label>
-              <select value={form.confirmEmail} onChange={e => setForm({ ...form, confirmEmail: e.target.value === 'true' })}>
-                <option value="false">Chưa xác nhận</option>
-                <option value="true">Đã xác nhận</option>
-              </select>
-              <button type="submit" className="save-btn">Lưu</button>
-              <button type="button" className="cancel-btn" onClick={() => setShowModal(false)}>Hủy</button>
+              <div className="form-group">
+                <label>Tài khoản</label>
+                <input value={form.userName} onChange={e => setForm({ ...form, userName: e.target.value })} required />
+              </div>
+              <div className="form-group">
+                <label>Họ tên</label>
+                <input value={form.fullname} onChange={e => setForm({ ...form, fullname: e.target.value })} />
+              </div>
+              <div className="form-group">
+                <label>Email</label>
+                <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
+              </div>
+              <div className="form-group">
+                <label>Password</label>
+                <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required={!isEdit} />
+              </div>
+              <div className="form-group">
+                <label>Số điện thoại</label>
+                <input value={form.phoneNumber} onChange={e => setForm({ ...form, phoneNumber: e.target.value })} />
+              </div>
+              <div className="form-group">
+                <label>Điểm</label>
+                <input type="number" value={form.points} onChange={e => setForm({ ...form, points: Number(e.target.value) })} />
+              </div>
+              <div className="form-group">
+                <label>Vai trò</label>
+                <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} required>
+                  <option value="">Chọn vai trò</option>
+                  <option value="1">Admin</option>
+                  <option value="2">User</option>
+                  <option value="3">Staff</option>
+                  <option value="4">Shipper</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Trạng thái</label>
+                <select name="status" value={form.status} onChange={e => setForm({ ...form, status: e.target.value === 'true' })}>
+                  <option value="true">Hoạt động</option>
+                  <option value="false">Ngừng</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Xác nhận email</label>
+                <select name="confirmEmail" value={form.confirmEmail} onChange={e => setForm({ ...form, confirmEmail: e.target.value === 'true' })}>
+                  <option value="false">Chưa xác nhận</option>
+                  <option value="true">Đã xác nhận</option>
+                </select>
+              </div>
+              <div className="form-actions">
+                <button type="submit" className="save-btn">Lưu</button>
+                <button type="button" className="cancel-btn" onClick={() => setShowModal(false)}>Hủy</button>
+              </div>
             </form>
           </div>
         </div>

@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductService from '../../services/product.service';
+import MaterialService from '../../services/material.service';
+import ThemeService from '../../services/theme.service';
 import { toast } from 'react-toastify';
 import '../../styles/admin/productAdd.scss';
 
 const ProductAdd = () => {
   const navigate = useNavigate();
+  const [materials, setMaterials] = useState([]);
+  const [themes, setThemes] = useState([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
   const [productData, setProductData] = useState({
     braceleteName: '',
@@ -21,6 +26,30 @@ const ProductAdd = () => {
   });
 
   const [loading, setLoading] = useState(false);
+
+  // Fetch materials and themes when component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoadingData(true);
+      try {
+        const [materialsResponse, themesResponse] = await Promise.all([
+          MaterialService.getAllMaterials(),
+          ThemeService.getAllThemes()
+        ]);
+        setMaterials(Array.isArray(materialsResponse.data) ? materialsResponse.data : []);
+        setThemes(Array.isArray(themesResponse.data) ? themesResponse.data : []);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        toast.error('Không thể tải dữ liệu chất liệu và chủ đề');
+        setMaterials([]);
+        setThemes([]);
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -102,26 +131,42 @@ const ProductAdd = () => {
             </div>
             
             <div className="form-group">
-              <label htmlFor="materialId">Mã chất liệu (materialId)</label>
-              <input 
-                type="number" 
-                id="materialId" 
+              <label htmlFor="materialId">Chất liệu</label>
+              <select
+                id="materialId"
                 name="materialId"
                 value={productData.materialId}
                 onChange={handleInputChange}
-                placeholder="Nhập mã chất liệu" 
-              />
+                required
+                disabled={isLoadingData}
+              >
+                <option value="">Chọn chất liệu</option>
+                {materials.map((material) => (
+                  <option key={material.id} value={material.id}>
+                    {material.materialName}
+                  </option>
+                ))}
+              </select>
+              {isLoadingData && <span className="loading-text">Đang tải...</span>}
             </div>
-             <div className="form-group">
-              <label htmlFor="themeId">Mã chủ đề (themeId)</label>
-              <input 
-                type="number" 
-                id="themeId" 
+            <div className="form-group">
+              <label htmlFor="themeId">Chủ đề</label>
+              <select
+                id="themeId"
                 name="themeId"
                 value={productData.themeId}
                 onChange={handleInputChange}
-                placeholder="Nhập mã chủ đề" 
-              />
+                required
+                disabled={isLoadingData}
+              >
+                <option value="">Chọn chủ đề</option>
+                {themes.map((theme) => (
+                  <option key={theme.id} value={theme.id}>
+                    {theme.themeName}
+                  </option>
+                ))}
+              </select>
+              {isLoadingData && <span className="loading-text">Đang tải...</span>}
             </div>
              <div className="form-group">
               <label htmlFor="color">Màu sắc</label>

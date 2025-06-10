@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './App.scss';
 
 import Layout from './components/layout/Layout';
+import AdminRoute from './components/auth/AdminRoute';
 import Home from './pages/Home';
 import Custom from './pages/Custom';
 import Charm from './pages/Charm';
@@ -34,6 +35,7 @@ import ManageCharm from './pages/admin/ManageCharm';
 // Import Charm management pages
 import AddCharm from './pages/admin/AddCharm';
 import EditCharm from './pages/admin/EditCharm';
+import AdminCharmDetail from './pages/admin/CharmDetail';
 import ManageCategories from './pages/admin/ManageCategories';
 import ManageOrders from './pages/admin/ManageOrders';
 import ViewGifs from './pages/admin/ViewGifs';
@@ -50,11 +52,12 @@ function App() {
       <Router>
         <Routes>
           {/* Admin Routes */}
-          <Route path="/admin" element={<Admin />} >
+          <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} >
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="product" element={<ProductList />} />
             <Route path="edit-product/:id" element={<EditProduct />} />
             <Route path="manage-charm" element={<ManageCharm />} />
+            <Route path="charm-detail/:id" element={<AdminCharmDetail />} />
             <Route path="customer-review" element={<CustomerReview />} />
             <Route path="product-stock" element={<ProductStock />} />
             <Route path="settings" element={<Settings />} />

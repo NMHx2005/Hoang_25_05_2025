@@ -194,27 +194,27 @@ const Home = () => {
       {/* Product Categories Section */}
       <section className="home__categories">
         <div className="home__categories-carousel">
-          <div className="home__categories-card">
+          <Link to="/new-trending" className="home__categories-card">
             <img src="/images/bg__1.png" alt="New & Trending" className="home__categories-image" />
             <div className="home__categories-info">
               <h3 className="home__categories-title">New & Trending</h3>
               <button className="home__categories-button">SHOP NOW</button>
             </div>
-          </div>
-          <div className="home__categories-card">
+          </Link>
+          <Link to="/custom#custom__radio-image-section" className="home__categories-card">
             <img src="/images/bg__2.png" alt="Create Your Own" className="home__categories-image" />
-             <div className="home__categories-info">
+            <div className="home__categories-info">
               <h3 className="home__categories-title">Create Your Own</h3>
               <button className="home__categories-button">SHOP NOW</button>
             </div>
-          </div>
-          <div className="home__categories-card">
+          </Link>
+          <Link to="/charm" className="home__categories-card">
             <img src="/images/bg__3.png" alt="Charms" className="home__categories-image" />
-             <div className="home__categories-info">
+            <div className="home__categories-info">
               <h3 className="home__categories-title">Charms</h3>
               <button className="home__categories-button">SHOP NOW</button>
             </div>
-          </div>
+          </Link>
         </div>
       </section>
 

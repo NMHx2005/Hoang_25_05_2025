@@ -9,7 +9,9 @@ import 'swiper/css/pagination';
 
 import CharmService from '../services/charm.service';
 import ProductService from '../services/product.service';
-import { Link } from 'react-router-dom';
+import CategoryService from '../services/category.service';
+import ImageService from '../services/image.service';
+import { Link, useLocation } from 'react-router-dom';
 
 // Helper component for star rating (simple placeholder)
 const StarRating = ({ rating }) => {
@@ -44,28 +46,84 @@ const Custom = () => {
   const [loadingYouMayLike, setLoadingYouMayLike] = useState(true);
   const [errorYouMayLike, setErrorYouMayLike] = useState(null);
 
+  // GIF Upload states
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+  const [uploadedGifUrl, setUploadedGifUrl] = useState('');
+
+  // Filter states
+  const [filterCategory, setFilterCategory] = useState('');
+  const [filterColor, setFilterColor] = useState('');
+  const [filterMinPrice, setFilterMinPrice] = useState('');
+  const [filterMaxPrice, setFilterMaxPrice] = useState('');
+  const [filterSortBy, setFilterSortBy] = useState('nameAsc'); // Default sort
+  const [charmCategories, setCharmCategories] = useState([]);
+
+  // Temporary filter state for popup
+  const [tempFilter, setTempFilter] = useState({
+    category: '',
+    color: '',
+    minPrice: '',
+    maxPrice: '',
+    sortBy: 'nameAsc',
+  });
+
+  const location = useLocation();
+
   const toggleFilterPopup = () => {
+    // When opening the popup, sync tempFilter with current applied filters
+    if (!isFilterPopupOpen) {
+      setTempFilter({
+        category: filterCategory,
+        color: filterColor,
+        minPrice: filterMinPrice,
+        maxPrice: filterMaxPrice,
+        sortBy: filterSortBy,
+      });
+    }
     setIsFilterPopupOpen(!isFilterPopupOpen);
   };
 
-  useEffect(() => {
-    const fetchCharmProducts = async () => {
-      try {
-        setLoadingCharms(true);
-        setErrorCharms(null);
-        const response = await CharmService.getAllCharms();
-        console.log("Fetched all charms:", response.data);
-        setCharmProducts(response.data);
-      } catch (error) {
-        console.error("Error fetching charm products:", error);
-        setErrorCharms(error.message || 'Failed to fetch charm products');
-        setCharmProducts([]);
-      } finally {
-        setLoadingCharms(false);
-      }
-    };
+  const fetchCharmProducts = async () => {
+    setLoadingCharms(true);
+    setErrorCharms(null);
+    try {
+      const searchParams = {
+        categoryId: filterCategory || undefined,
+        color: filterColor || undefined,
+        minPrice: filterMinPrice ? parseFloat(filterMinPrice) : undefined,
+        maxPrice: filterMaxPrice ? parseFloat(filterMaxPrice) : undefined,
+        sortBy: filterSortBy,
+      };
+      const response = await CharmService.searchCharms(searchParams);
+      console.log("Fetched charms with filters:", response.data);
+      setCharmProducts(response.data || []);
+    } catch (error) {
+      console.error("Error fetching charm products with filters:", error);
+      setErrorCharms(error.message || 'Failed to fetch charm products');
+      setCharmProducts([]);
+    } finally {
+      setLoadingCharms(false);
+    }
+  };
 
+  const fetchCharmCategories = async () => {
+    try {
+      const response = await CategoryService.getAllCharmCategories();
+      setCharmCategories(response.data || []);
+    } catch (error) {
+      console.error("Error fetching charm categories:", error);
+      setCharmCategories([]);
+    }
+  };
+
+  useEffect(() => {
     fetchCharmProducts();
+  }, [filterCategory, filterColor, filterMinPrice, filterMaxPrice, filterSortBy]); // Now dependent on applied filters
+
+  useEffect(() => {
+    fetchCharmCategories();
   }, []);
 
   useEffect(() => {
@@ -88,6 +146,58 @@ const Custom = () => {
     fetchYouMayAlsoLikeProducts();
   }, []);
 
+  useEffect(() => {
+    // Scroll to section if hash exists
+    const { hash } = location;
+    if (hash) {
+      const id = hash.replace('#', '');
+      const element = document.querySelector(`.${id}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [location.hash]);
+
+  // Handlers for filter changes
+  const handleTempFilterChange = (e) => {
+    const { name, value } = e.target;
+    setTempFilter(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleApplyFilters = () => {
+    setFilterCategory(tempFilter.category);
+    setFilterColor(tempFilter.color);
+    setFilterMinPrice(tempFilter.minPrice);
+    setFilterMaxPrice(tempFilter.maxPrice);
+    setFilterSortBy(tempFilter.sortBy);
+    toggleFilterPopup(); // Close the popup
+  };
+
+  const handleClearFilters = () => {
+    // Reset temporary filters to initial state
+    setTempFilter({
+      category: '',
+      color: '',
+      minPrice: '',
+      maxPrice: '',
+      sortBy: 'nameAsc',
+    });
+    // Reset applied filters to initial state (this will trigger re-fetch)
+    setFilterCategory('');
+    setFilterColor('');
+    setFilterMinPrice('');
+    setFilterMaxPrice('');
+    setFilterSortBy('nameAsc');
+    toggleFilterPopup(); // Close the popup
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+      setUploadError(null); // Clear any previous upload errors
+    }
+  };
+
   // Swiper settings for You May Also Like section
   const youMayAlsoLikeSwiperSettings = {
     slidesPerView: 'auto', // Allow multiple slides per view
@@ -97,36 +207,120 @@ const Custom = () => {
     // If you want navigation, add: navigation: true, modules: [Navigation],
   };
 
+  const handleUploadFile = async () => {
+    if (!selectedFile) {
+      setUploadError('Vui lòng chọn một file để tải lên.');
+      return;
+    }
+
+    setUploading(true);
+    setUploadError(null);
+    setUploadedGifUrl('');
+
+    try {
+      let folderName = "";
+      if (selectedFile.type === 'image/gif') {
+        folderName = "gifs";
+      } else if (selectedFile.type.startsWith('image/')) {
+        folderName = "images";
+      } else {
+        setUploadError('Định dạng file không được hỗ trợ. Vui lòng chọn GIF, JPG, hoặc PNG.');
+        setUploading(false);
+        return;
+      }
+
+      const response = await ImageService.uploadFile(selectedFile, folderName);
+      setUploadedGifUrl(response.fileUrl);
+      alert('Tải lên file thành công!');
+    } catch (error) {
+      console.error('Lỗi khi tải lên file:', error);
+      setUploadError(error.message || 'Không thể tải lên file. Vui lòng thử lại.');
+    } finally {
+      setUploading(false);
+      setSelectedFile(null);
+    }
+  };
+
   return (
     <div className="custom">
       {/* Filter Popup */}
       {isFilterPopupOpen && (
         <div className="filter-popup">
           <div className="filter-popup__overlay" onClick={toggleFilterPopup}></div>
-          <div className="filter-popup__sidebar">
+          <div className="filter-popup__content">
             <div className="filter-popup__header">
-              <h3 className="filter-popup__title">Filter & Sort</h3>
-              <button className="filter-popup__close-button" onClick={toggleFilterPopup}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-              </button>
+              <h2>Bộ lọc Charm</h2>
+              <button className="filter-popup__close" onClick={toggleFilterPopup}>×</button>
             </div>
-            <div className="filter-popup__content">
-              <div className="filter-popup__option">
-                <span>Sort By</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+
+            <div className="filter-popup__body">
+              <div className="filter-group">
+                <label htmlFor="tempCategory">Danh mục</label>
+                <select
+                  id="tempCategory"
+                  name="category"
+                  value={tempFilter.category}
+                  onChange={handleTempFilterChange}
+                >
+                  <option value="">Tất cả</option>
+                  {charmCategories.map(cat => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.categoryName}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div className="filter-popup__option">
-                <span>Category</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+
+              <div className="filter-group">
+                <label htmlFor="tempColor">Màu sắc</label>
+                <input
+                  type="text"
+                  id="tempColor"
+                  name="color"
+                  value={tempFilter.color}
+                  onChange={handleTempFilterChange}
+                  placeholder="Ví dụ: Vàng, Bạc"
+                />
               </div>
-              <div className="filter-popup__option">
-                <span>Color</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+
+              <div className="filter-group price-range">
+                <label>Giá</label>
+                <input
+                  type="number"
+                  name="minPrice"
+                  value={tempFilter.minPrice}
+                  onChange={handleTempFilterChange}
+                  placeholder="Từ"
+                />
+                <span>-</span>
+                <input
+                  type="number"
+                  name="maxPrice"
+                  value={tempFilter.maxPrice}
+                  onChange={handleTempFilterChange}
+                  placeholder="Đến"
+                />
               </div>
-              <div className="filter-popup__option">
-                <span>Size</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+
+              <div className="filter-group">
+                <label htmlFor="tempSortBy">Sắp xếp theo</label>
+                <select
+                  id="tempSortBy"
+                  name="sortBy"
+                  value={tempFilter.sortBy}
+                  onChange={handleTempFilterChange}
+                >
+                  <option value="nameAsc">Tên (A-Z)</option>
+                  <option value="nameDesc">Tên (Z-A)</option>
+                  <option value="priceAsc">Giá (Thấp-Cao)</option>
+                  <option value="priceDesc">Giá (Cao-Thấp)</option>
+                </select>
               </div>
+            </div>
+
+            <div className="filter-popup__footer">
+              <button className="btn-clear" onClick={handleClearFilters}>Xóa bộ lọc</button>
+              <button className="btn-apply" onClick={handleApplyFilters}>Áp dụng</button>
             </div>
           </div>
         </div>
@@ -154,8 +348,36 @@ const Custom = () => {
 
       {/* Radio/Image Section */}
       <section className="custom__radio-image-section">
-        {/* Removed image placeholder */}
-        <button className="custom__radio-button">RADIO</button>
+        {/* GIF Upload Section - Now main content of radio-image-section */}
+        <div className="container custom__gif-upload-content-wrapper"> {/* Add a wrapper for centering */} 
+          <h2>Tải lên File Tùy chỉnh của bạn</h2>
+          <div className="custom__upload-area">
+            <input
+              type="file"
+              accept=".gif, .jpeg, .jpg, .png"
+              onChange={handleFileChange}
+              id="gifUploadInput"
+              className="custom__upload-input"
+            />
+            <label htmlFor="gifUploadInput" className="custom__upload-label">
+              {selectedFile ? selectedFile.name : 'Chọn file GIF/Ảnh...'}
+            </label>
+            <button
+              onClick={handleUploadFile}
+              disabled={!selectedFile || uploading}
+              className="custom__upload-button"
+            >
+              {uploading ? 'Đang tải lên...' : 'Tải lên File'}
+            </button>
+          </div>
+          {uploadError && <p className="custom__upload-error">{uploadError}</p>}
+          {uploadedGifUrl && (
+            <div className="custom__uploaded-gif-preview">
+              <p>File đã tải lên:</p>
+              <img src={uploadedGifUrl} alt="Uploaded File" />
+            </div>
+          )}
+        </div>
       </section>
 
       {/* Products Section */}

@@ -14,23 +14,24 @@ const ReviewService = {
 
     // API description is "Xem full review của user", but endpoint is GET /Review
     // Assuming this endpoint gets all reviews (maybe with pagination/filters)
-    getAllReviews: async (params = {}) => { // GET /Review
-        const response = await axiosInstance.get('/Review', { params });
+    getAllReviews: async () => { // GET /Review
+        const response = await axiosInstance.get('/Review');
         return response.data;
     },
 
     createReview: async (reviewData) => { // POST /Review (User review after purchasing)
+        // reviewData should contain: { productId, isCharm, rating, comment }
         const response = await axiosInstance.post('/Review', reviewData);
         return response.data;
     },
 
-    getReviewsByProductId: async (productId, params = {}) => { // GET /Review/product/{productId}
-        const response = await axiosInstance.get(`/Review/product/${productId}`, { params });
+    getReviewsByProductId: async (productId) => { // GET /Review/product/{productId}
+        const response = await axiosInstance.get(`/Review/product/${productId}`);
         return response.data;
     },
 
-    getReviewsByUserId: async (userId, params = {}) => { // GET /Review/user/{userId}
-        const response = await axiosInstance.get(`/Review/user/${userId}`, { params });
+    getReviewsByUserId: async (userId) => { // GET /Review/user/{userId}
+        const response = await axiosInstance.get(`/Review/user/${userId}`);
         return response.data;
     },
 

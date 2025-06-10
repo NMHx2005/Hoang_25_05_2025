@@ -1,10 +1,11 @@
 import './NewTrending.scss';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { Link } from 'react-router-dom';
 import ProductService from '../services/product.service';
 import CharmService from '../services/charm.service';
+import CategoryService from '../services/category.service';
 
 const NewTrending = () => {
   const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
@@ -15,23 +16,58 @@ const NewTrending = () => {
   const [loadingYouMayLike, setLoadingYouMayLike] = useState(true);
   const [errorYouMayLike, setErrorYouMayLike] = useState(null);
 
+  const [categories, setCategories] = useState([]);
+  const [tempFilter, setTempFilter] = useState({
+    sortBy: 'nameAsc',
+    category: '',
+    color: '',
+    minPrice: '',
+    maxPrice: '',
+  });
+  const [filterSortBy, setFilterSortBy] = useState('nameAsc');
+  const [filterCategory, setFilterCategory] = useState('');
+  const [filterColor, setFilterColor] = useState('');
+  const [filterMinPrice, setFilterMinPrice] = useState('');
+  const [filterMaxPrice, setFilterMaxPrice] = useState('');
+
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoadingProducts(true);
+      setErrorProducts(null);
+      const searchParams = {
+        sortBy: filterSortBy,
+        categoryId: filterCategory || undefined,
+        color: filterColor || undefined,
+        minPrice: filterMinPrice ? parseFloat(filterMinPrice) : undefined,
+        maxPrice: filterMaxPrice ? parseFloat(filterMaxPrice) : undefined,
+      };
+      const response = await ProductService.searchProducts(searchParams);
+      console.log('API response (main products):', response);
+      setProducts(Array.isArray(response) ? response : []);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setErrorProducts(error.message || 'Failed to fetch products');
+      setProducts([]);
+    } finally {
+      setLoadingProducts(false);
+    }
+  }, [filterSortBy, filterCategory, filterColor, filterMinPrice, filterMaxPrice]);
+
   useEffect(() => {
-    const fetchProducts = async () => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  useEffect(() => {
+    const fetchCharmCategories = async () => {
       try {
-        setLoadingProducts(true);
-        setErrorProducts(null);
-        const response = await ProductService.getAllProducts();
-        console.log('API response (main products):', response);
-        setProducts(Array.isArray(response) ? response : []);
+        const response = await CategoryService.getAllCharmCategories();
+        setCategories(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
-        console.error('Error fetching products:', error);
-        setErrorProducts(error.message || 'Failed to fetch products');
-        setProducts([]);
-      } finally {
-        setLoadingProducts(false);
+        console.error('Error fetching categories:', error);
+        setCategories([]);
       }
     };
-    fetchProducts();
+    fetchCharmCategories();
   }, []);
 
   useEffect(() => {
@@ -63,7 +99,47 @@ const NewTrending = () => {
     );
   };
 
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setTempFilter((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleApplyFilters = () => {
+    setFilterSortBy(tempFilter.sortBy);
+    setFilterCategory(tempFilter.category);
+    setFilterColor(tempFilter.color);
+    setFilterMinPrice(tempFilter.minPrice);
+    setFilterMaxPrice(tempFilter.maxPrice);
+    setIsFilterPopupOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    setTempFilter({
+      sortBy: 'nameAsc',
+      category: '',
+      color: '',
+      minPrice: '',
+      maxPrice: '',
+    });
+    setFilterSortBy('nameAsc');
+    setFilterCategory('');
+    setFilterColor('');
+    setFilterMinPrice('');
+    setFilterMaxPrice('');
+    setIsFilterPopupOpen(false);
+  };
+
   const toggleFilterPopup = () => {
+    if (!isFilterPopupOpen) {
+      // When opening, initialize tempFilter with current applied filters
+      setTempFilter({
+        sortBy: filterSortBy,
+        category: filterCategory,
+        color: filterColor,
+        minPrice: filterMinPrice,
+        maxPrice: filterMaxPrice,
+      });
+    }
     setIsFilterPopupOpen(!isFilterPopupOpen);
   };
 
@@ -72,171 +148,181 @@ const NewTrending = () => {
       {isFilterPopupOpen && (
         <div className="filter-popup">
           <div className="filter-popup__overlay" onClick={toggleFilterPopup}></div>
-          <div className="filter-popup__sidebar">
+          <div className="filter-popup__content">
             <div className="filter-popup__header">
-              <h3 className="filter-popup__title">Filter & Sort</h3>
-              <button className="filter-popup__close-button" onClick={toggleFilterPopup}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="feather feather-x"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
+              <h2>Bộ lọc sản phẩm</h2>
+              <button className="filter-popup__close" onClick={toggleFilterPopup}>×</button>
             </div>
-            <div className="filter-popup__content">
-              <div className="filter-popup__option">
-                <span>Sort By</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+
+            <div className="filter-popup__body">
+              <div className="filter-group">
+                <label htmlFor="sortBy">Sắp xếp theo</label>
+                <select
+                  id="sortBy"
+                  name="sortBy"
+                  value={tempFilter.sortBy}
+                  onChange={handleFilterChange}
                 >
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
+                  <option value="nameAsc">Tên (A-Z)</option>
+                  <option value="nameDesc">Tên (Z-A)</option>
+                  <option value="priceAsc">Giá (Thấp-Cao)</option>
+                  <option value="priceDesc">Giá (Cao-Thấp)</option>
+                </select>
               </div>
-              <div className="filter-popup__option">
-                <span>Category</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+
+              <div className="filter-group">
+                <label htmlFor="category">Danh mục</label>
+                <select
+                  id="category"
+                  name="category"
+                  value={tempFilter.category}
+                  onChange={handleFilterChange}
                 >
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
+                  <option value="">Tất cả</option>
+                  {categories.map((cat) => (
+                    <option key={cat.categoryId} value={cat.categoryId}>
+                      {cat.categoryName}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div className="filter-popup__option">
-                <span>Color</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
+
+              <div className="filter-group">
+                <label htmlFor="color">Màu sắc</label>
+                <input
+                  type="text"
+                  id="color"
+                  name="color"
+                  value={tempFilter.color}
+                  onChange={handleFilterChange}
+                  placeholder="Ví dụ: Vàng, Bạc"
+                />
               </div>
-              <div className="filter-popup__option">
-                <span>Size</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
+
+              <div className="filter-group price-range">
+                <label>Giá</label>
+                <input
+                  type="number"
+                  name="minPrice"
+                  value={tempFilter.minPrice}
+                  onChange={handleFilterChange}
+                  placeholder="Từ"
+                />
+                <span>-</span>
+                <input
+                  type="number"
+                  name="maxPrice"
+                  value={tempFilter.maxPrice}
+                  onChange={handleFilterChange}
+                  placeholder="Đến"
+                />
               </div>
+            </div>
+            
+            <div className="filter-popup__footer">
+              <button className="btn-clear" onClick={handleClearFilters}>Xóa bộ lọc</button>
+              <button className="btn-apply" onClick={handleApplyFilters}>Áp dụng</button>
             </div>
           </div>
         </div>
       )}
-      <div className="container">
-        <h1 className="new-trending__title">SHOP ALL / NEW & TRENDING</h1>
-        <div className="new-trending__desc-row">
-          <div className="new-trending__desc-img">
-            <img src="/images/charm__eye.png" alt="desc" />
+
+      <section className="new-trending__header-section">
+        <div className="container">
+          <h1 className="new-trending__main-title">SHOP ALL / NEW & TRENDING</h1>
+          <div className="new-trending__content-row">
+            <div className="new-trending__header-left">
+              <img src="/images/newtrending_header.png" alt="Shop All" className="new-trending__header-image" />
+              <div className="new-trending__header-text-content">
+                <p>We're always dreaming up new ways to <a href="#">expand your self-love vocabulary</a>. Check out the latest "self-love" affirmations to add the finishing touch to your style and <a href="#">inspire others</a> every day.</p>
+              </div>
+            </div>
+            <div className="new-trending__header-right">
+              <button className="new-trending__filter-btn" onClick={toggleFilterPopup}>FILTER & SORT</button>
+            </div>
           </div>
-          <div className="new-trending__desc-text">
-            <span>
-              We're always dreaming up new ways to <a href="#">expand your self-love vocabulary</a>. Check out the latest
-              wearable affirmations to add the finishing touch to your style and <a href="#">inspire kindness</a> every
-              day.
-            </span>
-          </div>
-          <button className="new-trending__filter-btn" onClick={toggleFilterPopup}>
-            FILTER & SORT
-          </button>
         </div>
-        <div className="new-trending__product-grid">
+      </section>
+
+      <section className="new-trending__products-section">
+        <div className="container">
           {loadingProducts ? (
-            <div>Loading products...</div>
+            <div className="new-trending__loading">Đang tải sản phẩm...</div>
           ) : errorProducts ? (
-            <div style={{ color: 'red' }}>{errorProducts}</div>
-          ) : products.length === 0 ? (
-            <div>No products available.</div>
+            <div className="new-trending__error">{errorProducts}</div>
           ) : (
-            (products || []).map((product) => (
-              <Link to={`/product/${product.id}`} key={product.id} style={{ textDecoration: 'none' }}>
-                <div className="new-trending__product-item">
-                  <div className="new-trending__product-image-container">
-                    <img src={product.image} alt={product.braceleteName} className="new-trending__product-image" />
-                    <div className="new-trending__add-icon">+</div>
-                  </div>
-                  <p className="new-trending__product-name">{product.braceleteName}</p>
-                  <p className="new-trending__product-price">{product.price.toLocaleString('vi-VN')}₫</p>
-                </div>
-              </Link>
-            ))
+            <div className="new-trending__product-grid">
+              {products.length === 0 ? (
+                <div className="new-trending__no-products">Không tìm thấy sản phẩm nào.</div>
+              ) : (
+                products.map((product) => (
+                  <Link 
+                    to={`/product/${product.id}`}
+                    key={product.id}
+                    style={{ textDecoration: 'none' }}
+                  >
+                    <div className="new-trending__product-item">
+                      <span className="new-trending__product-badge">NEW</span>
+                      <div className="new-trending__product-image-container">
+                        <img src={product.image} alt={product.braceleteName} />
+                        <button className="new-trending__product-item__add-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                        </button>
+                      </div>
+                      <div className="new-trending__product-item-name">{product.braceleteName}</div>
+                      <div className="new-trending__product-item-price">{product.price.toLocaleString('vi-VN')}₫</div>
+                    </div>
+                  </Link>
+                ))
+              )}
+            </div>
           )}
         </div>
-        <div className="new-trending__loadmore-block">
-          <div className="new-trending__viewed-info">You've Viewed 48 of 55 Products</div>
+      </section>
+
+      <section className="new-trending__loadmore-block">
+        <div className="container">
+          {/* <div className="new-trending__viewed-info">You've Viewed 48 of 52 Products</div> */}
           <button className="new-trending__loadmore-btn">LOAD MORE</button>
         </div>
-        <section className="new-trending__you-may-also-like">
-          <h2 className="new-trending__you-may-also-like-title">You May Also Like</h2>
+      </section>
+
+      <section className="new-trending__you-may-also-like">
+        <div className="container">
+          <h2 className="new-trending__you-may-also-like-title">YOU MAY ALSO LIKE</h2>
           {loadingYouMayLike ? (
-            <div>Loading recommended charms...</div>
+            <div>Đang tải sản phẩm gợi ý...</div>
           ) : errorYouMayLike ? (
             <div style={{ color: 'red' }}>{errorYouMayLike}</div>
           ) : youMayAlsoLikeCharms.length === 0 ? (
-            <div>No recommended charms available.</div>
+            <div>Không có sản phẩm gợi ý nào.</div>
           ) : (
-            <Swiper spaceBetween={20} slidesPerView={'auto'}>
+            <Swiper
+              slidesPerView={'auto'}
+              spaceBetween={16}
+              freeMode={true}
+              className="mySwiper"
+            >
               {youMayAlsoLikeCharms.map((charm) => (
-                <SwiperSlide key={charm.id} style={{ width: 280 }}>
+                <SwiperSlide key={charm.id} style={{ width: 260 }}>
                   <Link to={`/charm/${charm.id}`} style={{ textDecoration: 'none' }}>
-                    <div className="new-trending__product-item">
-                      <div className="new-trending__product-item-image-container">
+                    <div className="new-trending__you-may-also-like-item">
+                      <div className="new-trending__product-image-container">
                         <img src={charm.image} alt={charm.charmName} />
-                        <div className="new-trending__product-item__add-icon">+</div>
+                        <button className="new-trending__product-item__add-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                        </button>
                       </div>
-                      <div className="new-trending__product-item-name">{charm.charmName}</div>
-                      <div className="new-trending__product-item-price">{charm.price.toLocaleString('vi-VN')}₫</div>
+                      <h3>{charm.charmName}</h3>
+                      <p>{charm.price.toLocaleString('vi-VN')}₫</p>
                     </div>
                   </Link>
                 </SwiperSlide>
               ))}
             </Swiper>
           )}
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 };
