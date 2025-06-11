@@ -42,7 +42,11 @@ class CharmService {
     }
 
     addCharmQuantity(id, quantity) {
-        return axiosInstance.post(`/Charm/${id}/add-stock`, null, { params: { quantity } });
+        return axiosInstance.post(`/Charm/${id}/add-stock`, quantity, {
+            headers: {
+                'Content-Type': 'application/json-patch+json'
+            }
+        });
     }
 
     updateCharmQuantity(id, quantity) {

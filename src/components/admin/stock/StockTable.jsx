@@ -16,8 +16,10 @@ const StockTable = ({ data, activeType, onDistribute, onUpdate }) => {
       <tbody>
         {data.length > 0 ? (
           data.map((item) => (
-            <tr key={item.id}>
-              <td data-label="Select"><input type="checkbox" aria-label={`Select row ${item.id}`} /></td>
+            <tr key={activeType === 'BRACELET' ? item.item1?.id : item.id}>
+              <td data-label="Select">
+                <input type="checkbox" aria-label={`Select row ${activeType === 'BRACELET' ? item.item1?.id : item.id}`} />
+              </td>
               <td data-label="Product">
                 {activeType === 'BRACELET' ? item.item1?.braceleteName : item.charm?.charmName}
               </td>
@@ -28,7 +30,10 @@ const StockTable = ({ data, activeType, onDistribute, onUpdate }) => {
                 <div className="action-buttons">
                   <button 
                     className="action-btn"
-                    onClick={() => onUpdate(item.id, activeType === 'BRACELET' ? item.item1?.braceleteName : item.charm?.charmName)}
+                    onClick={() => onUpdate(
+                      activeType === 'BRACELET' ? item.item1?.id : item.id, 
+                      activeType === 'BRACELET' ? item.item1?.braceleteName : item.charm?.charmName
+                    )}
                   >
                     Adjust
                   </button>
@@ -38,7 +43,10 @@ const StockTable = ({ data, activeType, onDistribute, onUpdate }) => {
                 <div className="action-buttons">
                   <button 
                     className="action-btn"
-                    onClick={() => onDistribute(item.id, activeType === 'BRACELET' ? item.item1?.braceleteName : item.charm?.charmName)}
+                    onClick={() => onDistribute(
+                      activeType === 'BRACELET' ? item.item1?.id : item.id,
+                      activeType === 'BRACELET' ? item.item1?.braceleteName : item.charm?.charmName
+                    )}
                   >
                     Distribute
                   </button>

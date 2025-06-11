@@ -69,7 +69,7 @@ const Checkout = () => {
     setSubmitting(true);
     setErrorSubmit(null);
 
-    if (!userData || !userData.id) {
+    if (!userData || !userData.userId) {
         setErrorSubmit('User not logged in.');
         setSubmitting(false);
         return;
@@ -83,25 +83,22 @@ const Checkout = () => {
 
     // Construct the order payload
     const orderPayload = {
-      id: 0, // Assuming 0 for new order as per your data structure
+      userId: userData.userId,
       address: formData.address,
       note: formData.note,
       amountDiscount: 0, // Assuming no discount for now, implement logic if needed
-      paymentMethod: formData.paymentMethod, // Ensure this matches backend expectations
+      paymentMethod: formData.paymentMethod,
       phoneNumber: formData.phoneNumber,
       cartItemRequests: cartItems.map(item => ({
           productType: item.productType,
           productId: item.productId,
           quantity: item.quantity,
-      })),
-       // Add userId to the payload if your API expects it here
-       // userId: userData.id,
+      }))
     };
 
     console.log('Order Payload:', orderPayload);
 
     try {
-      // *** Replace with your actual API call to /api/cart/checkout ***
       const response = await axiosInstance.post('/cart/checkout', orderPayload);
       console.log('Checkout successful:', response.data);
 

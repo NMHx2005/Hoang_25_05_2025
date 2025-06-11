@@ -49,7 +49,7 @@ const ProductService = {
 
     getBraceletInventory: async () => {
         const response = await axiosInstance.get('/bracelet-inventory');
-        return response.data;
+        return response;
     },
 
     addBraceletStock: async (id, quantity) => {
@@ -58,7 +58,11 @@ const ProductService = {
     },
 
     addBraceleteQuantity: async (id, quantity) => {
-        const response = await axiosInstance.post(`/bracelete/${id}/add-quantity`, null, { params: { quantity }, headers: { 'Content-Type': null } });
+        const response = await axiosInstance.post(`/bracelete/${id}/add-quantity`, quantity, {
+            headers: {
+                'Content-Type': 'application/json-patch+json'
+            }
+        });
         return response.data;
     },
 

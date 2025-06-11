@@ -85,7 +85,7 @@ const ProductStock = () => {
         setInventoryData(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
         console.error(`Error distributing ${activeType}:`, error);
-        toast.error(`Không thể phân phối ${activeType === 'BRACELET' ? 'Vòng tay' : 'Charm'}.`);
+        toast.error(error.response?.data?.message || `Không thể phân phối ${activeType === 'BRACELET' ? 'Vòng tay' : 'Charm'}.`);
     }
   };
 

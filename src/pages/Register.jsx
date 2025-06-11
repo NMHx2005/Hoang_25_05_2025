@@ -28,7 +28,13 @@ const Register = () => {
     setLoading(true);
 
     try {
-      await AuthService.register(formData);
+      await AuthService.register(
+        formData.userName,
+        formData.email,
+        formData.password,
+        formData.fullname,
+        formData.phoneNumber
+      );
       toast.success('Đăng ký thành công!');
       navigate('/login');
     } catch (error) {

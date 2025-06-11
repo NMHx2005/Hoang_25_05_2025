@@ -13,8 +13,14 @@ const AuthService = {
     },
 
     // Đăng ký người dùng mới
-    register: async (username, email, password) => {
-        const response = await axiosInstance.post('/user/register', { userName: username, email, password });
+    register: async (userName, email, password, fullname, phoneNumber) => {
+        const response = await axiosInstance.post('/user/register', { 
+            userName, 
+            email, 
+            password,
+            fullname,
+            phoneNumber
+        });
         return response.data;
     },
 
