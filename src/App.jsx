@@ -19,6 +19,7 @@ import OrderSuccess from './pages/OrderSuccess';
 import Admin from './pages/admin/Admin';
 import Register from './pages/Register';
 import Account from './pages/Account';
+import ReviewQR from './pages/ReviewQR';
 
 // Import admin page components
 import Dashboard from './pages/admin/Dashboard';
@@ -95,6 +96,7 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="order-success" element={<OrderSuccess />} />
+            <Route path="review-qr" element={<ReviewQR />} />
           </Route>
         </Routes>
         <ToastContainer position="top-right" autoClose={3000} />
